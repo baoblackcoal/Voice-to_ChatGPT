@@ -1,11 +1,11 @@
 {
 	"manifest_version": 3,
-	"name": "Talk-to-ChatGPT",
-	"version": "1.6.1",
+	"name": "Voice-to-ChatGPT",
+	"version": "0.9.0",
 	"permissions": [
 		"activeTab"
 	],
-	"description": "Talk to ChatGPT through your microphone and hear its responses with a voice. Uses speech recognition and text-to-speech technologies",
+	"description": "Voice-To-ChatGPT, Hold to Talk, and Release to Send.  Voice-To-ChatGPT through your microphone and hear its responses with a voice. Uses speech recognition and text-to-speech technologies",
 	"action": {
 		"default_popup": "popup.html",
 		"default_icon": {              

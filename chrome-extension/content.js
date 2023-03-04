@@ -487,7 +487,7 @@ function CN_HoldToTalkHandle(sendOrCancel) {
 
 	jQuery("#CancelButton").hide()
 	jQuery("#EditButton").hide()
-	jQuery("#HoldToTalkButton").text("Hold To Talk");
+	jQuery("#HoldToTalkButton").text("Hold to Talk");
 
 	CN_MOUSE_CLICK = 1;
 
@@ -559,6 +559,7 @@ document.addEventListener('mouseup', function(event) {
 		if (CHECK_RECOGNITION_STATE == 1) {
 			CN_EXIST_TEXT = "";
 			jQuery("textarea").val(CN_EXIST_TEXT);
+			showToastMessage("You have not say anything yet.");
 		}
 		CN_HoldToTalkHandle(0)
 	} else if (CHECK_RECOGNITION_STATE != -1) {
@@ -710,49 +711,57 @@ function CN_InitScript() {
 	};
 
 	// Add icons on the top right corner
-	jQuery("body").append("<span style='position: fixed; top: 8px; right: 16px; display: inline-block; " +
-		"background: #888; color: white; padding: 8px; font-size: 16px; border-radius: 4px; text-align: center; width: 300px;" +
-		"font-weight: bold; z-index: 1111;' id='TTGPTSettings'><a href='https://github.com/C-Nedelcu/talk-to-chatgpt' target=_blank title='Visit project website'>Talk-to-ChatGPT v1.6.1</a><br />" +
-		"<span style='font-size: 16px;' class='CNStartZone'>" +
-		"<button style='border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black;' id='CNStartButton'>▶️ START</button>" +
-		"</span>" +
-		"<span style='font-size: 20px; display:none;' class='CNActionButtons'>" +
-		// "<span class='CNToggle' title='Voice recognition enabled. Click to disable' data-cn='micon'>🎙️ </span>  " + // Microphone enabled
-		// "<span class='CNToggle' title='Voice recognition disabled. Click to enable' style='display:none;' data-cn='micoff'>🤫 </span>  " + // Microphone disabled
-		"<span class='CNToggle' title='Text-to-speech (bot voice) enabled. Click to disable. This will skip the current message entirely.' data-cn='speakon'>🔊 </span>  " + // Speak out loud
-		"<span class='CNToggle' title='Text-to-speech (bot voice) disabled. Click to enable' style='display:none;' data-cn='speakoff'>🔇 </span>  " + // Mute
-		// "<span class='CNToggle' title='Skip the message currently being read by the bot.' data-cn='skip'>⏩ </span>  " + // Skip
-		"<span class='CNToggle' title='Open settings menu to change bot voice, language, and other settings' data-cn='settings'>⚙️</span> " + // Settings
-		// "<span class='CNToggle' title='Voice recognition enabled. Click to disable' style='display:none;' data-cn='saystart'>🎙️ </span>  " + // Microphone enabled
-		// "<span class='CNToggle' title='Voice recognition disabled. Click to enable' data-cn='sayfinish'>🤫 </span>  " + // Microphone disabled
-		"</span><br />" +
-		// "<span style='font-size: 16px;' class='TalkZone'>" +
-		// 	"<button style='border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black;' id='HoldToTalkButton'> Hold To Talk </button>"+
-		// "</span>"+
-		// "<br />"+
-		// "<span style='font-size: 16px;' class='TalkZone1'>" +
-		// 	"<button id='HoldToTalkButton1' style='border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black;'>Hold to talk</button>"+
-		// 	"<br />"+
-		// 	"<button id='CancelButton1' style='display: none; border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black; width: 80px;'>Cancel</button>"+
-		// 	"<button id='EditButton1' style='display: none; border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black; width: 80px;'>Edit</button>"+
-		// 	"<br />"+
-		// 	"<textarea id='Content1' style='display: none; height: 150px; width: 280px; color: black;'  placeholder='Listening1'></textarea>"+
-		// 	// "<div id='CancelButton1' >Cancel</div>"+
-		// 	// "<textarea id='Content1' ></textarea>"+
-		// "</span>"+
-		"</span>");
+	// jQuery("body").append("<span style='position: fixed; top: 8px; right: 16px; display: inline-block; " +
+	// 	"background: #888; color: white; padding: 8px; font-size: 16px; border-radius: 4px; text-align: center; width: 300px;" +
+	// 	"font-weight: bold; z-index: 1111;' id='TTGPTSettings'><a href='https://github.com/C-Nedelcu/talk-to-chatgpt' target=_blank title='Visit project website'>Talk-to-ChatGPT v1.6.1</a><br />" +
+	// 	"<span style='font-size: 16px;' class='CNStartZone'>" +
+	// 	"<button style='border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black;' id='CNStartButton'>▶️ START</button>" +
+	// 	"</span>" +
+	// 	"<span style='font-size: 20px; display:none;' class='CNActionButtons'>" +
+	// 	// "<span class='CNToggle' title='Voice recognition enabled. Click to disable' data-cn='micon'>🎙️ </span>  " + // Microphone enabled
+	// 	// "<span class='CNToggle' title='Voice recognition disabled. Click to enable' style='display:none;' data-cn='micoff'>🤫 </span>  " + // Microphone disabled
+	// 	"<span class='CNToggle' title='Text-to-speech (bot voice) disabled. Click to enable' style='display:none;' data-cn='speakoff'>🔇 </span>  " + // Mute
+	// 	// "<span class='CNToggle' title='Skip the message currently being read by the bot.' data-cn='skip'>⏩ </span>  " + // Skip
+	// 	"<span class='CNToggle' title='Open settings menu to change bot voice, language, and other settings' data-cn='settings'>⚙️</span> " + // Settings
+	// 	// "<span class='CNToggle' title='Voice recognition enabled. Click to disable' style='display:none;' data-cn='saystart'>🎙️ </span>  " + // Microphone enabled
+	// 	// "<span class='CNToggle' title='Voice recognition disabled. Click to enable' data-cn='sayfinish'>🤫 </span>  " + // Microphone disabled
+	// 	"</span><br />" +
+	// 	// "<span style='font-size: 16px;' class='TalkZone'>" +
+	// 	// 	"<button style='border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black;' id='HoldToTalkButton'> Hold To Talk </button>"+
+	// 	// "</span>"+
+	// 	// "<br />"+
+	// 	// "<span style='font-size: 16px;' class='TalkZone1'>" +
+	// 	// 	"<button id='HoldToTalkButton1' style='border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black;'>Hold to talk</button>"+
+	// 	// 	"<br />"+
+	// 	// 	"<button id='CancelButton1' style='display: none; border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black; width: 80px;'>Cancel</button>"+
+	// 	// 	"<button id='EditButton1' style='display: none; border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black; width: 80px;'>Edit</button>"+
+	// 	// 	"<br />"+
+	// 	// 	"<textarea id='Content1' style='display: none; height: 150px; width: 280px; color: black;'  placeholder='Listening1'></textarea>"+
+	// 	// 	// "<div id='CancelButton1' >Cancel</div>"+
+	// 	// 	// "<textarea id='Content1' ></textarea>"+
+	// 	// "</span>"+
+	// 	"</span>");
 
 
 	// create element
 	const targetDiv = document.querySelector('.flex.flex-col');
 	const newDiv = document.createElement('div');
 	newDiv.innerHTML = "" +
-		"<div style='font-size: 16px; text-align: center; justify-content: center; margin-bottom: 10px; ' id='HoldZone'>" +
-		"<div id='toast-message' style='display: none; position: fixed; bottom: 20px; left: 40%; transform: translateX(-50%); padding: 10px; background-color: #333; color: #fff; border-radius: 5px; z-index: 9999;'></div>" +
-		"<button id='CancelButton' style='display: none; border: 1px solid #CCC; padding: 4px; background: #FFF; border-radius: 4px; color:black; width: 200px;'>Move here to Cancel</button>" +
-		"<button id='HoldToTalkButton' style='border: 1px solid #CCC; padding: 6px;  margin-left: 5px; margin-right: 5px; background: #FFF; border-radius: 4px; color:black; width: 150px;'>Hold to talk</button>" +
-		"<button id='EditButton' style='display: none; border: 1px solid #CCC; padding: 2px;  background: #FFF; border-radius: 4px; color:black; width: 200px;'>Move here to Edit</button>" +
-		
+		"<div style='font-size: 16px; text-align: center; justify-content: center; margin-bottom: 10px;' id='HoldZone'>" +
+			"<div id='toast-message' style='display: none; position: fixed; bottom: 20px; left: 40%; transform: translateX(-50%); padding: 10px; background-color: #333; color: #fff; border-radius: 5px; z-index: 9999;'></div>" +
+
+			"<div style=' display: inline-block; width: 230px; '>" +  
+				"<span class='CNToggle' title='Voice to ChatGPT' style='padding-right: 10px;' data-cn='extension-name''>Voice-to-ChatGPT</span>" +
+				"<span class='CNToggle' title='Text-to-speech (bot voice) enabled. Click to disable. This will skip the current message entirely.' style=' padding-right: 5px;' data-cn='speakon'>🔊 </span>  " + // Speak out loud
+				"<span class='CNToggle' title='Text-to-speech (bot voice) disabled. Click to enable' style='display:none; padding-left: 5px;' data-cn='speakoff'>🔇 </span>  " + // Mute
+				"<span class='CNToggle' title='Open settings menu to change bot voice, language, and other settings'  style='padding-left: 5px; padding-right: 5px;' data-cn='settings'>⚙️</span> " + // Settings	
+			"</div>" +
+
+			"<div style=' display: inline-block; '>" +  
+				"<button id='CancelButton' style='display: none; border: 1px solid #CCC; padding: 4px; background: #FFF; border-radius: 4px; color:black; width: 160px;'>Move here to Cancel</button>" +
+				"<button id='HoldToTalkButton' style='border: 1px solid #CCC; padding: 6px;  margin-left: 5px; margin-right: 5px; background: #FFF; border-radius: 4px; color:black; width: 150px;'>Hold to talk</button>" +
+				"<button id='EditButton' style='display: none; border: 1px solid #CCC; padding: 2px;  background: #FFF; border-radius: 4px; color:black; width: 160px;'>Move here to Edit</button>" +
+			"</div>" +
 		"</div>";
 	targetDiv.append(newDiv);
 
@@ -847,14 +856,15 @@ function CN_OnSettingsIconClick() {
 	var table = "<table cellpadding=6 cellspacing=0 style='margin: 30px;'>" + rows + closeRow + "</table>";
 
 	// A short text at the beginning
-	var desc = "<div style='margin: 8px;'>Please note: some the voices and speech recognition languages do not appear to work. If the one you select doesn't work, try reloading the page. " +
-		"If it still doesn't work after reloading the page, please try selecting another voice or language. " +
-		"Also, sometimes the text-to-speech API takes time to kick in, give it a few seconds to hear the bot speak. <b>Remember this is an experimental extension created just for fun.</b> " +
-		"Check out the <a href='https://github.com/C-Nedelcu/talk-to-chatgpt' target=_blank style='text-decoration: underline'>project page</a> to get the source code." +
+	var desc = "<div style='margin: 8px;'><b>Voice-To-ChatGPT, Hold to Talk, and Release to Send. </b>  <br />  <br /> Please note: Voice-to-ChatGPT is inspired by <a href='https://chrome.google.com/webstore/detail/talk-to-chatgpt/hodadfhfagpiemkeoliaelelfbboamlk'>Talk-to-ChatGPT</a> and most souce code come from Voice-to-ChatGPT, thanks to Voice-to-ChatGPT. <br />" + 
+		"some the voices and speech recognition languages do not appear to work. If the one you select doesn't work, try reloading the page. <br />" +
+		"If it still doesn't work after reloading the page, please try selecting another voice or language. <br />" +
+		"Also, sometimes the text-to-speech API takes time to kick in, give it a few seconds to hear the bot speak.<br />" + 
+		"<b>Also, like Voice-to-ChatGPT says that 'Remember this is an experimental extension created just for fun.</b>' " +
 		"</div>";
 
 	// Open a whole screenful of settings
-	jQuery("body").append("<div style='background: rgba(0,0,0,0.7); position: absolute; top: 0; right: 0; left: 0; bottom: 0; z-index: 999999; padding: 20px; color: white; font-size: 14px;' id='TTGPTSettingsArea'><h1>⚙️ Talk-to-GPT settings</h1>" + desc + table + "</div>");
+	jQuery("body").append("<div style='background: rgba(0,0,0,0.7); position: absolute; top: 0; right: 0; left: 0; bottom: 0; z-index: 999999; padding: 20px; color: white; font-size: 14px;' id='TTGPTSettingsArea'><h1>⚙️ Voice-to-ChatGPT settings</h1>" + desc + table + "</div>");
 
 	// Assign events
 	setTimeout(function () {
@@ -967,7 +977,7 @@ function CN_GetCookie(name) {
 
 	setTimeout(function () {
 		typeof jQuery == "undefined" ?
-			alert("[Talk-to-ChatGPT] Sorry, but jQuery was not able to load. The script cannot run. Try using Google Chrome on Windows 11") :
+			alert("[Voice-to-ChatGPT] Sorry, but jQuery was not able to load. The script cannot run. Try using Google Chrome on Windows 11") :
 			CN_InitScript();
 	}, 500);
 
