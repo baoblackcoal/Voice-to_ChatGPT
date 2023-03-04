@@ -2,6 +2,9 @@
 	"manifest_version": 3,
 	"name": "Talk-to-ChatGPT",
 	"version": "1.6.1",
+	"permissions": [
+		"activeTab"
+	],
 	"description": "Talk to ChatGPT through your microphone and hear its responses with a voice. Uses speech recognition and text-to-speech technologies",
 	"action": {
 		"default_popup": "popup.html",

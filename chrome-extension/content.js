@@ -569,7 +569,7 @@ function CN_InitScript() {
 	
 	// Add icons on the top right corner
 	jQuery("body").append("<span style='position: fixed; top: 8px; right: 16px; display: inline-block; " +
-		"background: #888; color: white; padding: 8px; font-size: 16px; border-radius: 4px; text-align: center" +
+		"background: #888; color: white; padding: 8px; font-size: 16px; border-radius: 4px; text-align: center; width: 300px;" +
 		"font-weight: bold; z-index: 1111;' id='TTGPTSettings'><a href='https://github.com/C-Nedelcu/talk-to-chatgpt' target=_blank title='Visit project website'>Talk-to-ChatGPT v1.6.1</a><br />" +
 		"<span style='font-size: 16px;' class='CNStartZone'>" +
 		"<button style='border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black;' id='CNStartButton'>▶️ START</button>"+
@@ -587,16 +587,22 @@ function CN_InitScript() {
 		"<span style='font-size: 16px;' class='TalkZone'>" +
 			"<button style='border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black;' id='HoldToTalkButton'> Hold To Talk </button>"+
 		"</span>"+
-
+		"<br />"+
 		"<span style='font-size: 16px;' class='TalkZone1'>" +
-			"<div id='HoldToTalkButton1' style='width: 100px; height: 50px;'>Hold to talk</div>"+
-			"<div id='CancelButton1' style='display: none;'>Cancel</div>"+
-			"<textarea id='Content1' style='display: none;'></textarea>"+
+			"<button id='HoldToTalkButton1' style='border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black;'>Hold to talk</button>"+
+			"<br />"+
+			"<button id='CancelButton1' style='display: none; border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black; width: 80px;'>Cancel</button>"+
+			"<button id='EditButton1' style='display: none; border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black; width: 80px;'>Edit</button>"+
+			"<br />"+
+			"<textarea id='Content1' style='display: none; height: 150px; width: 280px; color: black;'  placeholder='Listening1'></textarea>"+
 			// "<div id='CancelButton1' >Cancel</div>"+
 			// "<textarea id='Content1' ></textarea>"+
 		"</span>"+
 		"</span>");
-	
+
+	jQuery("#Content1").removeAttr("readonly");
+	jQuery("#Content1").removeAttr("disabled");
+
 	setTimeout(function () {
 		// Try and get voices
 		speechSynthesis.getVoices();
@@ -620,16 +626,37 @@ function CN_InitScript() {
 	}, 100);
 
 	CN_StartTTGPT();
+
+
+	// create button element
+const myButton = document.createElement('button');
+myButton.innerText = 'Click me!';
+myButton.style.cssText = " height: 300px; width: 300px;";
+const targetDiv = document.querySelector('.flex.flex-col');
+
+const newDiv = document.createElement('div');
+newDiv.innerHTML = "<span style='font-size: 16px; text-align: center; display: flex; justify-content: center;' class='TalkZone1'>" +
+"<button id='CancelButton1' style='display: none; border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black; width: 80px;'>Cancel</button>"+
+"<button id='HoldToTalkButton1' style='border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black;'>Hold to talk</button>"+
+"<button id='EditButton1' style='display: none; border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black; width: 80px;'>Edit</button>"+
+"</span>";
+
+// targetDiv.appendChild(myButton);
+targetDiv.append(newDiv);
+
+
 }
 
 function CN_HoldToTalkButton1KeyDown() {
 	console.log("CN_HoldToTalkButton1KeyDown");
 	jQuery("#CancelButton1").show()
+	jQuery("#EditButton1").show()
 	jQuery("#Content1").show()
 }
 
 function CN_CancelButton1MouseOver() {
 	jQuery("#CancelButton1").hide()
+	jQuery("#EditButton1").hide()
 	jQuery("#Content1").hide()
 }
 
