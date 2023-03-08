@@ -473,12 +473,6 @@ function CN_checkRecognition(event) {
 
 }
 
-// function CN_HoldToTalkButtonKeyUp() {
-// 	if (CHECK_RECOGNITION_STATE == 1 || CHECK_RECOGNITION_STATE == 2) 
-// 		jQuery("textarea").val("");
-// 	CN_HoldToTalkHandle(0)
-// }
-
 //0-send, 1-cancel
 function CN_HoldToTalkHandle(sendOrCancel) {
 	// $(this).css("display", "none");
@@ -512,22 +506,6 @@ function CN_HoldToTalkHandle(sendOrCancel) {
 	if (CN_SPEECHREC && CN_IS_LISTENING) CN_SPEECHREC.stop();
 }
 
-// function CN_CancelButtonMouseOver() {
-// 	console.log("CN_CanceButtonMouseOver");
-
-// 	CN_HoldToTalkButtonKeyUp(1)
-// 	jQuery("textarea").val("");
-// }
-
-// function CN_EditButtonMouseOver() {
-// 	console.log("CN_EditlButtonMouseOver");
-// 	if (CHECK_RECOGNITION_STATE == 1) {
-// 		jQuery("textarea").val("");
-// 	} else if (CHECK_RECOGNITION_STATE == 2) {
-// 		jQuery("textarea").val(CN_EXIST_TEXT);
-// 	}
-// 	CN_HoldToTalkHandle(1)
-// }
 
 function showToastMessage(message) {
 	var toastMessage = $("#toast-message");
@@ -536,36 +514,40 @@ function showToastMessage(message) {
   }
 
 document.addEventListener('mouseup', function(event) {
-	console.log("document mouseup");
-	var HoldToTalkButton = document.getElementById('HoldToTalkButton');
-	var EditButton = document.getElementById('EditButton');
-	var CancelButton = document.getElementById('CancelButton');
+	// console.log("document mouseup");
+	try {
+		var HoldToTalkButton = document.getElementById('HoldToTalkButton');
+		var EditButton = document.getElementById('EditButton');
+		var CancelButton = document.getElementById('CancelButton');
 
-	if (CancelButton.contains(event.target)) {
-		console.log("CN_CanceButtonMouseOver");
-		CN_HoldToTalkHandle(1)
-		jQuery("textarea").val("");
-	} else if (EditButton.contains(event.target)) {
-		console.log("CN_EditlButtonMouseOver");
-		if (CHECK_RECOGNITION_STATE == 1) {
+		if (CancelButton.contains(event.target)) {
+			console.log("CN_CanceButtonMouseOver");
+			CN_HoldToTalkHandle(1)
 			jQuery("textarea").val("");
-			showToastMessage("You have not say anything yet.");
-		} else if (CHECK_RECOGNITION_STATE == 2) {
-			showToastMessage("You can edit your message now.");
-			jQuery("textarea").val(CN_EXIST_TEXT);
+		} else if (EditButton.contains(event.target)) {
+			console.log("CN_EditlButtonMouseOver");
+			if (CHECK_RECOGNITION_STATE == 1) {
+				jQuery("textarea").val("");
+				showToastMessage("You have not say anything yet.");
+			} else if (CHECK_RECOGNITION_STATE == 2) {
+				showToastMessage("You can edit your message now.");
+				jQuery("textarea").val(CN_EXIST_TEXT);
+			}
+			CN_HoldToTalkHandle(1)
+		} else if (HoldToTalkButton.contains(event.target)) {
+			if (CHECK_RECOGNITION_STATE == 1) {
+				CN_EXIST_TEXT = "";
+				jQuery("textarea").val(CN_EXIST_TEXT);
+				showToastMessage("You have not say anything yet.");
+			}
+			CN_HoldToTalkHandle(0)
+		} else if (CHECK_RECOGNITION_STATE != -1) {
+			console.log("mouse up outside to cancel");
+			CN_HoldToTalkHandle(1)
+			jQuery("textarea").val("");
 		}
-		CN_HoldToTalkHandle(1)
-	} else if (HoldToTalkButton.contains(event.target)) {
-		if (CHECK_RECOGNITION_STATE == 1) {
-			CN_EXIST_TEXT = "";
-			jQuery("textarea").val(CN_EXIST_TEXT);
-			showToastMessage("You have not say anything yet.");
-		}
-		CN_HoldToTalkHandle(0)
-	} else if (CHECK_RECOGNITION_STATE != -1) {
-		console.log("mouse up outside to cancel");
-		CN_HoldToTalkHandle(1)
-		jQuery("textarea").val("");
+	} catch (error) {
+		console.log("error: " + error);
 	}
 });
 
@@ -647,9 +629,13 @@ function CN_ToggleButtonClick() {
 	}
 }
 
+function SpeakTextBaseButtonClick() {
+	console.log("SpeakTextBaseButtonClick");
+}
+
 // Start Talk-to-GPT (Start button)
 function CN_StartTTGPT() {
-	CN_SayOutLoud("OK");
+	// CN_SayOutLoud("OK");
 	CN_FINISHED = false;
 
 	// Hide start button, show action buttons
@@ -743,29 +729,37 @@ function CN_InitScript() {
 	// 	"</span>");
 
 
-	// create element
-	const targetDiv = document.querySelector('.flex.flex-col');
-	const newDiv = document.createElement('div');
-	newDiv.innerHTML = "" +
-		"<div style='font-size: 16px; text-align: center; justify-content: center; margin-bottom: 10px;' id='HoldZone'>" +
-			"<div id='toast-message' style='display: none; position: fixed; bottom: 20px; left: 40%; transform: translateX(-50%); padding: 10px; background-color: #333; color: #fff; border-radius: 5px; z-index: 9999;'></div>" +
-
-			"<div style=' display: inline-block; width: 230px; '>" +  
-				"<span class='CNToggle' title='Voice to ChatGPT' style='padding-right: 10px;' data-cn='extension-name''>Voice-to-ChatGPT</span>" +
-				"<span class='CNToggle' title='Text-to-speech (bot voice) enabled. Click to disable. This will skip the current message entirely.' style=' padding-right: 5px;' data-cn='speakon'>🔊 </span>  " + // Speak out loud
-				"<span class='CNToggle' title='Text-to-speech (bot voice) disabled. Click to enable' style='display:none; padding-left: 5px;' data-cn='speakoff'>🔇 </span>  " + // Mute
-				"<span class='CNToggle' title='Open settings menu to change bot voice, language, and other settings'  style='padding-left: 5px; padding-right: 5px;' data-cn='settings'>⚙️</span> " + // Settings	
-			"</div>" +
-
-			"<div style=' display: inline-block; '>" +  
-				"<button id='CancelButton' style='display: none; border: 1px solid #CCC; padding: 4px; background: #FFF; border-radius: 4px; color:black; width: 160px;'>Move here to Cancel</button>" +
-				"<button id='HoldToTalkButton' style='border: 1px solid #CCC; padding: 6px;  margin-left: 5px; margin-right: 5px; background: #FFF; border-radius: 4px; color:black; width: 150px;'>Hold to talk</button>" +
-				"<button id='EditButton' style='display: none; border: 1px solid #CCC; padding: 2px;  background: #FFF; border-radius: 4px; color:black; width: 160px;'>Move here to Edit</button>" +
-			"</div>" +
-		"</div>";
-	targetDiv.append(newDiv);
-
 	setTimeout(function () {
+		// create element
+		const targetDiv = document.querySelector('.relative.flex.h-full.flex-1.md\\:flex-col');
+		const newDiv = document.createElement('div');
+		newDiv.innerHTML = "" +
+			"<div style='font-size: 16px; text-align: center; justify-content: center; margin-top: 10px;' id='HoldZone'>" +
+				"<div id='toast-message' style='display: none; position: fixed; bottom: 20px; left: 40%; transform: translateX(-50%); padding: 10px; background-color: #333; color: #fff; border-radius: 5px; z-index: 9999;'></div>" +
+
+				"<div style=' display: inline-block; width: 230px; '>" +  
+					"<span class='CNToggle' title='Voice to ChatGPT' style='padding-right: 10px; user-select: none;' data-cn='extension-name''>Voice-to-ChatGPT</span>" +
+					"<span class='CNToggle' title='Text-to-speech (bot voice) enabled. Click to disable. This will skip the current message entirely.' style=' padding-right: 5px;  font-size: 20px; user-select: none;' data-cn='speakon'>🔊 </span>  " + // Speak out loud
+					"<span class='CNToggle' title='Text-to-speech (bot voice) disabled. Click to enable' style='display:none; padding-right: 5px;  font-size: 20px; user-select: none;' data-cn='speakoff'>🔇 </span>  " + // Mute
+					"<span class='CNToggle' title='Open settings menu to change bot voice, language, and other settings'  style='padding-right: 5px;  font-size: 20px; user-select: none;' data-cn='settings'>⚙️</span> " + // Settings	
+				"</div>" +
+
+				"<div style=' display: inline-block; '>" +  
+					"<button id='CancelButton' style='display: none; border: 1px solid #CCC; padding: 4px; background: #FFF; border-radius: 4px; color:black; width: 160px;'>Move here to Cancel</button>" +
+					"<button id='HoldToTalkButton' style='border: 1px solid #CCC; padding: 6px;  margin-left: 5px; margin-right: 5px; background: #FFF; border-radius: 4px; color:black; width: 150px;'>Hold to talk</button>" +
+					"<button id='EditButton' style='display: none; border: 1px solid #CCC; padding: 2px;  background: #FFF; border-radius: 4px; color:black; width: 160px;'>Move here to Edit</button>" +
+				"</div>" +
+			"</div>";
+		targetDiv.append(newDiv);
+
+
+		// const openaiLogos = document.querySelectorAll('.w-\\[30px\\].flex.flex-col.relative.items-end');
+		// for (let i = 0; i < openaiLogos.length; i++) {
+		// 	const speakDiv = document.createElement('div');
+		// 	speakDiv.innerHTML = "<div class='SpeakTextBaseButton' style='margin-top: 8px; font-size: 20px; user-select: none;' title='Click to speak'> 🔊 </div>";
+		// 	openaiLogos[i].append(speakDiv);
+		// }
+
 		// Try and get voices
 		speechSynthesis.getVoices();
 
@@ -777,6 +771,9 @@ function CN_InitScript() {
 		jQuery("#CNStartButton").on("click", CN_StartTTGPT);
 
 		jQuery("#HoldToTalkButton").on("mousedown", CN_HoldToTalkButtonKeyDown);
+
+		jQuery(".SpeakTextBaseButton").on("click", SpeakTextBaseButtonClick);
+
 		// jQuery("#HoldToTalkButton").on("mouseup", CN_HoldToTalkButtonKeyUp);
 		// jQuery("#HoldToTalkButton").on("mouseout", CN_HoldButtonMouseOut);
 
@@ -785,7 +782,7 @@ function CN_InitScript() {
 		
 		// jQuery("#HoldZone").on("mouseout", CN_HoldZoneMouseOut);
 
-	}, 100);
+	}, 500);
 
 	CN_StartTTGPT();
 
