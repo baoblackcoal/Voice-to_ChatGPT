@@ -39,6 +39,9 @@ var CN_WANTED_VOICE_NAME = "";
 // ----------------------------
 
 
+const recordButtonRecordSvg = " <svg width='25px' height='25px' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'> <path fill-rule='evenodd' clip-rule='evenodd' d='M8 6C8 3.79086 9.79086 2 12 2C14.2091 2 16 3.79086 16 6V11C16 13.2091 14.2091 15 12 15C9.79086 15 8 13.2091 8 11V6Z' fill='#152C70'/> 		<path d='M5 9C5.55228 9 6 9.44772 6 10V11C6 14.3137 8.68629 17 12 17C15.3137 17 18 14.3137 18 11V10C18 9.44772 18.4477 9 19 9C19.5523 9 20 9.44772 20 10V11C20 15.0803 16.9453 18.4471 12.9981 18.9383C12.9994 18.9587 13 18.9793 13 19V21C13 21.5523 12.5523 22 12 22C11.4477 22 11 21.5523 11 21V19C11 18.9793 11.0006 18.9587 11.0019 18.9383C7.05466 18.4471 4 15.0803 4 11V10C4 9.44772 4.44772 9 5 9Z' fill='#152C70'/> </svg> ";
+const recordButtonSendSvg = "<svg width='24px' height='24px' viewBox='0 0 48 48' fill='none' xmlns='http://www.w3.org/2000/svg'> <path d='M48 0H0V48H48V0Z' fill='white' fill-opacity='0.01'/> <path d='M43 5L29.7 43L22.1 25.9L5 18.3L43 5Z' stroke='#000000' stroke-width='4' stroke-linejoin='round'/> <path d='M43.0001 5L22.1001 25.9' stroke='#000000' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/> </svg>";
+
 // -------------------
 // CODE (DO NOT ALTER)
 // -------------------
@@ -64,6 +67,8 @@ var CHECK_RECOGNITION_INTERVAL_CNT = 0;
 var CHECK_RECOGNITION_STATE = -1; //-1-ready, 0-start listening, 1-listening and not get words, 2-listening and get words, 3-stop listening
 var CHECK_LISTEN_DOT = ' .';
 var CN_EXIST_TEXT = '';
+var RecordSendState = 0; //0: recording, 1: sending
+
 
 // This function will say the given text out loud using the browser's speech synthesis API
 function CN_SayOutLoud(text) {
@@ -435,7 +440,7 @@ function CN_HoldToTalkButtonKeyDown() {
 }
 
 function CN_checkRecognition(event) {
-	console.log("CN_checkRecognition CHECK_RECOGNITION_STATE="+CHECK_RECOGNITION_STATE);
+	// console.log("CN_checkRecognition CHECK_RECOGNITION_STATE="+CHECK_RECOGNITION_STATE);
 
 	// Put message in textarea
 	jQuery("textarea:first").focus();
@@ -510,45 +515,76 @@ function CN_HoldToTalkHandle(sendOrCancel) {
 function showToastMessage(message) {
 	var toastMessage = $("#toast-message");
 	toastMessage.text(message);
-	toastMessage.fadeIn().delay(2000).fadeOut();
+	toastMessage.fadeIn().delay(1000).fadeOut();
   }
+
+function sendRecordText() {
+	if (CHECK_RECOGNITION_STATE == 1) {
+		CN_EXIST_TEXT = "";
+		jQuery("textarea").val(CN_EXIST_TEXT);
+		showToastMessage("You haven't spoken yet.");
+	}
+	CN_HoldToTalkHandle(0)
+}
+
+function recordToEdit() {
+	console.log("CN_EditlButtonMouseOver");
+	if (CHECK_RECOGNITION_STATE == 1) {
+		jQuery("textarea").val("");
+		showToastMessage("You haven't spoken yet.");
+	} else if (CHECK_RECOGNITION_STATE == 2) {
+		showToastMessage("Edit your message now.");
+		jQuery("textarea").val(CN_EXIST_TEXT);
+	}
+	CN_HoldToTalkHandle(1)
+	recordButtonHandle(0);
+}
 
 document.addEventListener('mouseup', function(event) {
 	// console.log("document mouseup");
 	try {
-		var HoldToTalkButton = document.getElementById('HoldToTalkButton');
-		var EditButton = document.getElementById('EditButton');
-		var CancelButton = document.getElementById('CancelButton');
-
-		if (CancelButton.contains(event.target)) {
-			console.log("CN_CanceButtonMouseOver");
-			CN_HoldToTalkHandle(1)
-			jQuery("textarea").val("");
-		} else if (EditButton.contains(event.target)) {
-			console.log("CN_EditlButtonMouseOver");
-			if (CHECK_RECOGNITION_STATE == 1) {
-				jQuery("textarea").val("");
-				showToastMessage("You have not say anything yet.");
-			} else if (CHECK_RECOGNITION_STATE == 2) {
-				showToastMessage("You can edit your message now.");
-				jQuery("textarea").val(CN_EXIST_TEXT);
-			}
-			CN_HoldToTalkHandle(1)
-		} else if (HoldToTalkButton.contains(event.target)) {
-			if (CHECK_RECOGNITION_STATE == 1) {
-				CN_EXIST_TEXT = "";
-				jQuery("textarea").val(CN_EXIST_TEXT);
-				showToastMessage("You have not say anything yet.");
-			}
-			CN_HoldToTalkHandle(0)
-		} else if (CHECK_RECOGNITION_STATE != -1) {
-			console.log("mouse up outside to cancel");
-			CN_HoldToTalkHandle(1)
-			jQuery("textarea").val("");
+		var RecordButton = document.getElementById('RecordButton');
+		if (!RecordButton.contains(event.target)) {
+			recordToEdit();
 		}
-	} catch (error) {
-		console.log("error: " + error);
+	} catch (e) {
+		console.log("document mouseup error: " + e);
 	}
+
+	// try {
+	// 	var HoldToTalkButton = document.getElementById('HoldToTalkButton');
+	// 	var EditButton = document.getElementById('EditButton');
+	// 	var CancelButton = document.getElementById('CancelButton');
+
+	// 	if (CancelButton.contains(event.target)) {
+	// 		console.log("CN_CanceButtonMouseOver");
+	// 		CN_HoldToTalkHandle(1)
+	// 		jQuery("textarea").val("");
+	// 	} else if (EditButton.contains(event.target)) {
+	// 		console.log("CN_EditlButtonMouseOver");
+	// 		if (CHECK_RECOGNITION_STATE == 1) {
+	// 			jQuery("textarea").val("");
+	// 			showToastMessage("You have not say anything yet.");
+	// 		} else if (CHECK_RECOGNITION_STATE == 2) {
+	// 			showToastMessage("You can edit your message now.");
+	// 			jQuery("textarea").val(CN_EXIST_TEXT);
+	// 		}
+	// 		CN_HoldToTalkHandle(1)
+	// 	} else if (HoldToTalkButton.contains(event.target)) {
+	// 		if (CHECK_RECOGNITION_STATE == 1) {
+	// 			CN_EXIST_TEXT = "";
+	// 			jQuery("textarea").val(CN_EXIST_TEXT);
+	// 			showToastMessage("You have not say anything yet.");
+	// 		}
+	// 		CN_HoldToTalkHandle(0)
+	// 	} else if (CHECK_RECOGNITION_STATE != -1) {
+	// 		console.log("mouse up outside to cancel");
+	// 		CN_HoldToTalkHandle(1)
+	// 		jQuery("textarea").val("");
+	// 	}
+	// } catch (error) {
+	// 	console.log("error: " + error);
+	// }
 });
 
 
@@ -656,6 +692,62 @@ function CN_StartTTGPT() {
 	if (CN_SPEECHREC && CN_IS_LISTENING) CN_SPEECHREC.stop();
 }
 
+document.addEventListener("keyup", function(event) {
+	if (event.key === 'Escape') {
+		if (RecordSendState == 1) {
+			console.log("Escape");
+			recordButtonHandle(0);
+			CN_HoldToTalkHandle(1)
+			jQuery("textarea").val("");
+		}
+	} else if (event.key === 'Space') {
+		if (RecordSendState == 1) {
+			recordButtonHandle(1);
+		}
+	}
+});
+
+document.addEventListener("keydown", function(event) {
+	if (event.key === 'Space') {
+		if (RecordSendState == 0) {
+			recordButtonHandle(1);
+		}
+	}
+});
+
+//0: cancel, 1: handle
+function recordButtonHandle(cancelOrHandleEvent) {
+	const recordButton = document.querySelector('#RecordButton');
+	recordButton.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+	if (cancelOrHandleEvent == 1) {
+		if (RecordSendState == 0) {
+			CN_HoldToTalkButtonKeyDown();
+		} else {
+			sendRecordText();
+		}
+		RecordSendState = 1 - RecordSendState;
+	} else {
+		RecordSendState = 0;
+	}
+	recordButton.innerHTML = RecordSendState == 0 ? recordButtonRecordSvg : recordButtonSendSvg;
+	if (RecordSendState == 0) {
+		if (cancelOrHandleEvent == 0) {
+			recordButton.style.opacity = '0.4';
+			recordButton.style.backgroundColor = 'rgba(0, 0, 0, 0.0)';
+		} else {
+			recordButton.style.opacity = '0.8';
+			recordButton.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+		}
+	} else {
+		recordButton.style.backgroundColor = 'rgba(0, 0, 0, 1)';
+	}
+	
+}
+
+function recordButtonClick() {
+	recordButtonHandle(1);
+}
+
 // Perform initialization after jQuery is loaded
 function CN_InitScript() {
 	if (typeof $ === null || typeof $ === undefined) $ = jQuery;
@@ -697,60 +789,113 @@ function CN_InitScript() {
 	};
 
 	// Add icons on the top right corner
-	// jQuery("body").append("<span style='position: fixed; top: 8px; right: 16px; display: inline-block; " +
-	// 	"background: #888; color: white; padding: 8px; font-size: 16px; border-radius: 4px; text-align: center; width: 300px;" +
-	// 	"font-weight: bold; z-index: 1111;' id='TTGPTSettings'><a href='https://github.com/C-Nedelcu/talk-to-chatgpt' target=_blank title='Visit project website'>Talk-to-ChatGPT v1.6.1</a><br />" +
-	// 	"<span style='font-size: 16px;' class='CNStartZone'>" +
-	// 	"<button style='border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black;' id='CNStartButton'>▶️ START</button>" +
-	// 	"</span>" +
-	// 	"<span style='font-size: 20px; display:none;' class='CNActionButtons'>" +
-	// 	// "<span class='CNToggle' title='Voice recognition enabled. Click to disable' data-cn='micon'>🎙️ </span>  " + // Microphone enabled
-	// 	// "<span class='CNToggle' title='Voice recognition disabled. Click to enable' style='display:none;' data-cn='micoff'>🤫 </span>  " + // Microphone disabled
-	// 	"<span class='CNToggle' title='Text-to-speech (bot voice) disabled. Click to enable' style='display:none;' data-cn='speakoff'>🔇 </span>  " + // Mute
-	// 	// "<span class='CNToggle' title='Skip the message currently being read by the bot.' data-cn='skip'>⏩ </span>  " + // Skip
-	// 	"<span class='CNToggle' title='Open settings menu to change bot voice, language, and other settings' data-cn='settings'>⚙️</span> " + // Settings
-	// 	// "<span class='CNToggle' title='Voice recognition enabled. Click to disable' style='display:none;' data-cn='saystart'>🎙️ </span>  " + // Microphone enabled
-	// 	// "<span class='CNToggle' title='Voice recognition disabled. Click to enable' data-cn='sayfinish'>🤫 </span>  " + // Microphone disabled
-	// 	"</span><br />" +
-	// 	// "<span style='font-size: 16px;' class='TalkZone'>" +
-	// 	// 	"<button style='border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black;' id='HoldToTalkButton'> Hold To Talk </button>"+
-	// 	// "</span>"+
-	// 	// "<br />"+
-	// 	// "<span style='font-size: 16px;' class='TalkZone1'>" +
-	// 	// 	"<button id='HoldToTalkButton1' style='border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black;'>Hold to talk</button>"+
-	// 	// 	"<br />"+
-	// 	// 	"<button id='CancelButton1' style='display: none; border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black; width: 80px;'>Cancel</button>"+
-	// 	// 	"<button id='EditButton1' style='display: none; border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black; width: 80px;'>Edit</button>"+
-	// 	// 	"<br />"+
-	// 	// 	"<textarea id='Content1' style='display: none; height: 150px; width: 280px; color: black;'  placeholder='Listening1'></textarea>"+
-	// 	// 	// "<div id='CancelButton1' >Cancel</div>"+
-	// 	// 	// "<textarea id='Content1' ></textarea>"+
-	// 	// "</span>"+
-	// 	"</span>");
+	jQuery("body").append("<span style='position: fixed; bottom: 160px; right: 16px;  font-size: 14px; text-align: center; z-index: 1111;   border: 0px; outline: none;' >" +
+		"<button style='padding: 4px; margin: 6px; background: rgba(0, 0, 0, 0); opacity: 0.4;  border-radius: 4px;' id='RecordButton'> 111111 </button> <br/>" +
+		"<button style='padding: 4px; margin: 6px; background: rgba(0, 0, 0, 0); opacity: 0.4; border-radius: 4px;' id='SettingButton'> " +
+		"<svg width='24px' height='24px' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'> <path fill-rule='evenodd' clip-rule='evenodd' d='M2.44044 10.2841L5.74755 4.28409C6.35499 3.18202 7.49767 2.5 8.73669 2.5H15.2633C16.5023 2.5 17.645 3.18202 18.2525 4.28409L21.5596 10.2841C22.1468 11.3495 22.1468 12.6505 21.5596 13.7159L18.2525 19.7159C17.645 20.818 16.5023 21.5 15.2633 21.5H8.73669C7.49767 21.5 6.35499 20.818 5.74755 19.7159L2.44044 13.7159C1.85319 12.6505 1.85319 11.3495 2.44044 10.2841ZM3.72151 11.0195L7.02861 5.01948C7.37572 4.38972 8.02868 4 8.73669 4H15.2633C15.9713 4 16.6243 4.38972 16.9714 5.01948L20.2785 11.0195C20.6141 11.6283 20.6141 12.3717 20.2785 12.9805L16.9714 18.9805C16.6243 19.6103 15.9713 20 15.2633 20H8.73669C8.02868 20 7.37572 19.6103 7.02861 18.9805L3.72151 12.9805C3.38593 12.3717 3.38593 11.6283 3.72151 11.0195Z' fill='#030D45'/> <path fill-rule='evenodd' clip-rule='evenodd' d='M12 9.75C10.7824 9.75 9.79526 10.7574 9.79526 12C9.79526 13.2426 10.7824 14.25 12 14.25C13.2176 14.25 14.2047 13.2426 14.2047 12C14.2047 10.7574 13.2176 9.75 12 9.75ZM8.32544 12C8.32544 9.92893 9.9706 8.25 12 8.25C14.0294 8.25 15.6746 9.92893 15.6746 12C15.6746 14.0711 14.0294 15.75 12 15.75C9.9706 15.75 8.32544 14.0711 8.32544 12Z' fill='#030D45'/> </svg>" +
+		"</button>" +
+		"<div id='toast-message' style='display: none; position: fixed; opacity: 1; bottom: 20px; left: 40%; transform: translateX(-50%); padding: 10px; background-color: #333; color: #fff; border-radius: 5px; z-index: 9999;'></div>" +
+		// " <a href='https://github.com/C-Nedelcu/talk-to-chatgpt' target=_blank title='Visit project website'>Talk-to-ChatGPT v1.6.1</a><br />" +
+		// "<span style='font-size: 16px;' class='CNStartZone'>" +
+		// "<button style='border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black;' id='CNStartButton'>▶️ START</button>" +
+		// "</span>" +
+		// "<span style='font-size: 20px; display:none;' class='CNActionButtons'>" +
+		// // "<span class='CNToggle' title='Voice recognition enabled. Click to disable' data-cn='micon'>🎙️ </span>  " + // Microphone enabled
+		// // "<span class='CNToggle' title='Voice recognition disabled. Click to enable' style='display:none;' data-cn='micoff'>🤫 </span>  " + // Microphone disabled
+		// "<span class='CNToggle' title='Text-to-speech (bot voice) disabled. Click to enable' style='display:none;' data-cn='speakoff'>🔇 </span>  " + // Mute
+		// // "<span class='CNToggle' title='Skip the message currently being read by the bot.' data-cn='skip'>⏩ </span>  " + // Skip
+		// "<span class='CNToggle' title='Open settings menu to change bot voice, language, and other settings' data-cn='settings'>⚙️</span> " + // Settings
+		// // "<span class='CNToggle' title='Voice recognition enabled. Click to disable' style='display:none;' data-cn='saystart'>🎙️ </span>  " + // Microphone enabled
+		// // "<span class='CNToggle' title='Voice recognition disabled. Click to enable' data-cn='sayfinish'>🤫 </span>  " + // Microphone disabled
+		// "</span><br />" +
+		// "<span style='font-size: 16px;' class='TalkZone'>" +
+		// 	"<button style='border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black;' id='HoldToTalkButton'> Hold To Talk </button>"+
+		// "</span>"+
+		// "<br />"+
+		// "<span style='font-size: 16px;' class='TalkZone1'>" +
+		// 	"<button id='HoldToTalkButton1' style='border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black;'>Hold to talk</button>"+
+		// 	"<br />"+
+		// 	"<button id='CancelButton1' style='display: none; border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black; width: 80px;'>Cancel</button>"+
+		// 	"<button id='EditButton1' style='display: none; border: 1px solid #CCC; padding: 4px; margin: 6px; background: #FFF; border-radius: 4px; color:black; width: 80px;'>Edit</button>"+
+		// 	"<br />"+
+		// 	"<textarea id='Content1' style='display: none; height: 150px; width: 280px; color: black;'  placeholder='Listening1'></textarea>"+
+		// 	// "<div id='CancelButton1' >Cancel</div>"+
+		// 	// "<textarea id='Content1' ></textarea>"+
+		// "</span>"+
+		"</span>");
+
+	
+	const recordButton = document.querySelector('#RecordButton');
+	recordButton.innerHTML = recordButtonRecordSvg;
+	recordButton.style.backgroundColor = 'rgba(0, 0, 0, 0);';
+	recordButton.addEventListener('mouseenter', () => {
+		recordButton.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+		recordButton.style.opacity = '0.8';
+	});
+	recordButton.addEventListener('mouseleave', () => {
+		recordButton.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+		if (RecordSendState == 0) {
+			recordButton.style.opacity = '0.4';
+		}
+	});
+	recordButton.addEventListener('focus', () => {
+		recordButton.style.outline = 'none';
+		recordButton.style.border = 'none';
+	  });
+	recordButton.addEventListener('click', () => {
+		recordButtonClick();
+	});
+
+	const settingButton = document.querySelector('#SettingButton');
+	settingButton.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+	settingButton.addEventListener('mouseenter', () => {
+		settingButton.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+		settingButton.style.opacity = '0.8';
+	});
+	settingButton.addEventListener('mouseleave', () => {
+		settingButton.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+		settingButton.style.opacity = '0.4';
+	});
+	settingButton.addEventListener('focus', () => {
+		settingButton.style.outline = 'none';
+		settingButton.style.border = 'none';
+	  });
+
+	jQuery("textarea").on('click', () => {
+		console.log("textarea clicked");
+		if (RecordSendState == 1) {
+			recordButtonClick();
+		}
+	});
+
 
 
 	setTimeout(function () {
-		// create element
-		const targetDiv = document.querySelector('.relative.flex.h-full.flex-1.md\\:flex-col');
-		const newDiv = document.createElement('div');
-		newDiv.innerHTML = "" +
-			"<div style='font-size: 16px; text-align: center; justify-content: center; margin-top: 10px;' id='HoldZone'>" +
-				"<div id='toast-message' style='display: none; position: fixed; bottom: 20px; left: 40%; transform: translateX(-50%); padding: 10px; background-color: #333; color: #fff; border-radius: 5px; z-index: 9999;'></div>" +
+		// // create element
+		// const targetDiv = document.querySelector('div.flex.ml-1.md\\:w-full.md\\:m-auto.md\\:mb-2.gap-0.md\\:gap-2.justify-center');
+		// const newDiv = document.createElement('div');
+		// newDiv.innerHTML = "" +
+		// 	"<div style='font-size: 16px; text-align: center; justify-content: center; margin-top: 10px;' id='HoldZone'>" +
+		// 		"<div id='toast-message' style='display: none; position: fixed; bottom: 20px; left: 40%; transform: translateX(-50%); padding: 10px; background-color: #333; color: #fff; border-radius: 5px; z-index: 9999;'></div>" +
 
-				"<div style=' display: inline-block; width: 230px; '>" +  
-					"<span class='CNToggle' title='Voice to ChatGPT' style='padding-right: 10px; user-select: none;' data-cn='extension-name''>Voice-to-ChatGPT</span>" +
-					"<span class='CNToggle' title='Text-to-speech (bot voice) enabled. Click to disable. This will skip the current message entirely.' style=' padding-right: 5px;  font-size: 20px; user-select: none;' data-cn='speakon'>🔊 </span>  " + // Speak out loud
-					"<span class='CNToggle' title='Text-to-speech (bot voice) disabled. Click to enable' style='display:none; padding-right: 5px;  font-size: 20px; user-select: none;' data-cn='speakoff'>🔇 </span>  " + // Mute
-					"<span class='CNToggle' title='Open settings menu to change bot voice, language, and other settings'  style='padding-right: 5px;  font-size: 20px; user-select: none;' data-cn='settings'>⚙️</span> " + // Settings	
-				"</div>" +
+		// 		"<div style=' display: inline-block; width: 230px; '>" +  
+		// 			// "<span class='CNToggle' title='Voice to ChatGPT' style='padding-right: 10px; user-select: none;' data-cn='extension-name''>Voice-to-ChatGPT</span>" +
+		// 			"<span class='CNToggle' title='Text-to-speech (bot voice) enabled. Click to disable. This will skip the current message entirely.' style=' padding-right: 5px;  font-size: 20px; user-select: none;' data-cn='speakon'>🔊</span>  " + // Speak out loud
+		// 			"<span class='CNToggle' title='Text-to-speech (bot voice) disabled. Click to enable' style='display:none; padding-right: 5px;  font-size: 20px; user-select: none;' data-cn='speakoff'>🔇</span>  " + // Mute
+		// 			"<span class='CNToggle' title='Open settings menu to change bot voice, language, and other settings'  style='padding-right: 5px;  font-size: 20px; user-select: none;' data-cn='settings'>⚙️</span> " + // Settings	
 
-				"<div style=' display: inline-block; '>" +  
-					"<button id='CancelButton' style='display: none; border: 1px solid #CCC; padding: 4px; background: #FFF; border-radius: 4px; color:black; width: 160px;'>Move here to Cancel</button>" +
-					"<button id='HoldToTalkButton' style='border: 1px solid #CCC; padding: 6px;  margin-left: 5px; margin-right: 5px; background: #FFF; border-radius: 4px; color:black; width: 150px;'>Hold to talk</button>" +
-					"<button id='EditButton' style='display: none; border: 1px solid #CCC; padding: 2px;  background: #FFF; border-radius: 4px; color:black; width: 160px;'>Move here to Edit</button>" +
-				"</div>" +
-			"</div>";
-		targetDiv.append(newDiv);
+		// 			"<span class='CNToggle' title='Voice recognition enabled. Click to disable'  style='padding-right: 5px;  font-size: 20px; user-select: none;' data-cn='saystop'>🛑</span>  " + // Microphone enabled
+		// 			"<span class='CNToggle' title='Voice recognition enabled. Click to disable'  style='padding-right: 5px;  font-size: 20px; user-select: none;' data-cn='saystart'>🎙️</span>  " + // Microphone enabled
+
+		// 		"</div>" +
+
+		// 		// "<div style=' display: inline-block; '>" +  
+		// 		// 	"<button id='CancelButton' style='display: none; border: 1px solid #CCC; padding: 4px; background: #FFF; border-radius: 4px; color:black; width: 160px;'>Move here to Cancel</button>" +
+		// 		// 	"<button id='HoldToTalkButton' style='border: 1px solid #CCC; padding: 6px;  margin-left: 5px; margin-right: 5px; background: #FFF; border-radius: 4px; color:black; width: 150px;'>Hold to talk</button>" +
+		// 		// 	"<button id='EditButton' style='display: none; border: 1px solid #CCC; padding: 2px;  background: #FFF; border-radius: 4px; color:black; width: 160px;'>Move here to Edit</button>" +
+		// 		// "</div>" +
+		// 	"</div>";
+		// targetDiv.append(newDiv);
 
 
 		// const openaiLogos = document.querySelectorAll('.w-\\[30px\\].flex.flex-col.relative.items-end');
@@ -853,7 +998,7 @@ function CN_OnSettingsIconClick() {
 	var table = "<table cellpadding=6 cellspacing=0 style='margin: 30px;'>" + rows + closeRow + "</table>";
 
 	// A short text at the beginning
-	var desc = "<div style='margin: 8px;'><b>Voice-To-ChatGPT, Hold to Talk, and Release to Send. </b>  <br />  <br /> Please note: Voice-to-ChatGPT is inspired by <a href='https://chrome.google.com/webstore/detail/talk-to-chatgpt/hodadfhfagpiemkeoliaelelfbboamlk'>Talk-to-ChatGPT</a> and most souce code come from Voice-to-ChatGPT, thanks to Voice-to-ChatGPT. <br />" + 
+	var desc = "<div style='margin: 8px;'><b>Voice-To-ChatGPT, Hold to Talk, and Release to Send. </b>  <br />  <br /> Please note: Voice-to-ChatGPT is inspired by <a href='https://chrome.google.com/webstore/detail/talk-to-chatgpt/hodadfhfagpiemkeoliaelelfbboamlk'>Talk-to-ChatGPT</a> and most souce code come from Talk-to-ChatGPT, thanks to Talk-to-ChatGPT. <br />" + 
 		"some the voices and speech recognition languages do not appear to work. If the one you select doesn't work, try reloading the page. <br />" +
 		"If it still doesn't work after reloading the page, please try selecting another voice or language. <br />" +
 		"Also, sometimes the text-to-speech API takes time to kick in, give it a few seconds to hear the bot speak.<br />" + 
