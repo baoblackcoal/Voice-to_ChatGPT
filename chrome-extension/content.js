@@ -36,6 +36,8 @@ var CN_SAY_THIS_TO_SEND = "send message now";
 // Indicate "locale-voice name" (the possible values are difficult to determine, you should just ignore this and use the settings menu instead)
 var CN_WANTED_VOICE_NAME = "";
 
+var CN_SPEAKING_DISABLED = false;
+
 // ----------------------------
 
 
@@ -58,7 +60,6 @@ var CN_WANTED_VOICE = null;
 var CN_TIMEOUT_KEEP_SYNTHESIS_WORKING = null;
 var CN_TIMEOUT_KEEP_SPEECHREC_WORKING = null;
 var CN_SPEECH_REC_SUPPORTED = false;
-var CN_SPEAKING_DISABLED = false;
 var CN_SPEECHREC_DISABLED = false;
 
 var CN_MOUSE_CLICK = 1; //0-DOWN, 1-UP
@@ -597,6 +598,30 @@ document.addEventListener('mouseup', function(event) {
 // 	}
 // }
 
+function speakStop() {
+	// Stop current message (equivalent to 'skip')
+	window.speechSynthesis.pause(); // Pause, and then...
+	window.speechSynthesis.cancel(); // Cancel everything
+	CN_CURRENT_MESSAGE = null; // Remove current message
+}
+
+function speakOn() {
+	$(this).css("display", "none");
+	$(".CNToggle[data-cn=speakoff]").css("display", "");
+	CN_SPEAKING_DISABLED = true;
+
+	// Stop current message (equivalent to 'skip')
+	window.speechSynthesis.pause(); // Pause, and then...
+	window.speechSynthesis.cancel(); // Cancel everything
+	CN_CURRENT_MESSAGE = null; // Remove current message
+}
+
+function speakOff() {
+	$(this).css("display", "none");
+	$(".CNToggle[data-cn=speakon]").css("display", "");
+	CN_SPEAKING_DISABLED = false;
+}
+
 // Toggle button clicks: settings, pause, skip...
 function CN_ToggleButtonClick() {
 	var action = $(this).data("cn");
@@ -633,24 +658,12 @@ function CN_ToggleButtonClick() {
 
 		// The bot's voice is on. Turn it off
 		case "speakon":
-			// Show other icon and hide this one
-			$(this).css("display", "none");
-			$(".CNToggle[data-cn=speakoff]").css("display", "");
-			CN_SPEAKING_DISABLED = true;
-
-			// Stop current message (equivalent to 'skip')
-			window.speechSynthesis.pause(); // Pause, and then...
-			window.speechSynthesis.cancel(); // Cancel everything
-			CN_CURRENT_MESSAGE = null; // Remove current message
+			speakOn();
 			return;
 
 		// The bot's voice is off. Turn it on
 		case "speakoff":
-			// Show other icon and hide this one
-			$(this).css("display", "none");
-			$(".CNToggle[data-cn=speakon]").css("display", "");
-			CN_SPEAKING_DISABLED = false;
-
+			speakOff();
 			return;
 
 		// Skip current message being read
@@ -859,7 +872,10 @@ function CN_InitScript() {
 	settingButton.addEventListener('focus', () => {
 		settingButton.style.outline = 'none';
 		settingButton.style.border = 'none';
-	  });
+	});
+	settingButton.addEventListener('click', () => {
+		CN_OnSettingsIconClick()
+	});
 
 	jQuery("textarea").on('click', () => {
 		console.log("textarea clicked");
@@ -960,6 +976,8 @@ function CN_OnSettingsIconClick() {
 	});
 	rows += "<tr><td>AI voice and language:</td><td><select id='TTGPTVoice' style='width: 300px; color: black'>" + voices + "</select></td></tr>";
 
+	rows += "<tr><td>Text-to-speech:</td><td><input  type='checkbox' id='TextToSpeeh' style='padding: 10px; color: black; border:2px solid white;'></input></td></tr>";
+
 	// 2. AI talking speed
 	rows += "<tr><td>AI talking speed (speech rate):</td><td><input type=number step='.1' id='TTGPTRate' style='color: black; width: 100px;' value='" + CN_TEXT_TO_SPEECH_RATE + "' /></td></tr>";
 
@@ -1008,6 +1026,9 @@ function CN_OnSettingsIconClick() {
 	// Open a whole screenful of settings
 	jQuery("body").append("<div style='background: rgba(0,0,0,0.7); position: absolute; top: 0; right: 0; left: 0; bottom: 0; z-index: 999999; padding: 20px; color: white; font-size: 14px;' id='TTGPTSettingsArea'><h1>⚙️ Voice-to-ChatGPT settings</h1>" + desc + table + "</div>");
 
+	var checkBox = document.getElementById("TextToSpeeh");
+	checkBox.checked = !CN_SPEAKING_DISABLED;
+
 	// Assign events
 	setTimeout(function () {
 		jQuery("#TTGPTSave").on("click", CN_SaveSettings);
@@ -1025,6 +1046,9 @@ function CN_SaveSettings() {
 		var allVoices = speechSynthesis.getVoices();
 		CN_WANTED_VOICE = allVoices[wantedVoiceIndex];
 		CN_WANTED_VOICE_NAME = CN_WANTED_VOICE.lang + "-" + CN_WANTED_VOICE.name;
+		CN_SPEAKING_DISABLED = !(jQuery("#TextToSpeeh").checked);
+		if (CN_SPEAKING_DISABLED) 
+			speakStop();
 		CN_TEXT_TO_SPEECH_RATE = Number(jQuery("#TTGPTRate").val());
 		CN_TEXT_TO_SPEECH_PITCH = Number(jQuery("#TTGPTPitch").val());
 
@@ -1041,6 +1065,7 @@ function CN_SaveSettings() {
 		// Save settings in cookie
 		var settings = [
 			CN_WANTED_VOICE_NAME,
+			CN_SPEAKING_DISABLED,
 			CN_TEXT_TO_SPEECH_RATE,
 			CN_TEXT_TO_SPEECH_PITCH,
 			CN_WANTED_LANGUAGE_SPEECH_REC,
@@ -1068,13 +1093,14 @@ function CN_RestoreSettings() {
 		if (typeof settings == "object" && settings != null) {
 			console.log("Reloading settings from cookie: " + settings);
 			CN_WANTED_VOICE_NAME = settings[0];
-			CN_TEXT_TO_SPEECH_RATE = settings[1];
-			CN_TEXT_TO_SPEECH_PITCH = settings[2];
-			CN_WANTED_LANGUAGE_SPEECH_REC = settings[3];
-			CN_SAY_THIS_WORD_TO_STOP = settings[4];
-			CN_SAY_THIS_WORD_TO_PAUSE = settings[5];
-			if (settings.hasOwnProperty(6)) CN_AUTO_SEND_AFTER_SPEAKING = settings[6] == 1;
-			if (settings.hasOwnProperty(7)) CN_SAY_THIS_TO_SEND = settings[7];
+			CN_SPEAKING_DISABLED = settings[1];
+			CN_TEXT_TO_SPEECH_RATE = settings[2];
+			CN_TEXT_TO_SPEECH_PITCH = settings[3];
+			CN_WANTED_LANGUAGE_SPEECH_REC = settings[4];
+			CN_SAY_THIS_WORD_TO_STOP = settings[5];
+			CN_SAY_THIS_WORD_TO_PAUSE = settings[6];
+			if (settings.hasOwnProperty(7)) CN_AUTO_SEND_AFTER_SPEAKING = settings[6] == 1;
+			if (settings.hasOwnProperty(8)) CN_SAY_THIS_TO_SEND = settings[7];
 		}
 	} catch (ex) {
 		console.error(ex);
