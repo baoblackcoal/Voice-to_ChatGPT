@@ -43,8 +43,8 @@ var CN_SPEAKING_ITEM_DISABLED = true;
 // ----------------------------
 
 
-const recordButtonRecordSvg = " <svg width='25px' height='25px' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'> <path fill-rule='evenodd' clip-rule='evenodd' d='M8 6C8 3.79086 9.79086 2 12 2C14.2091 2 16 3.79086 16 6V11C16 13.2091 14.2091 15 12 15C9.79086 15 8 13.2091 8 11V6Z' fill='#152C70'/> 		<path d='M5 9C5.55228 9 6 9.44772 6 10V11C6 14.3137 8.68629 17 12 17C15.3137 17 18 14.3137 18 11V10C18 9.44772 18.4477 9 19 9C19.5523 9 20 9.44772 20 10V11C20 15.0803 16.9453 18.4471 12.9981 18.9383C12.9994 18.9587 13 18.9793 13 19V21C13 21.5523 12.5523 22 12 22C11.4477 22 11 21.5523 11 21V19C11 18.9793 11.0006 18.9587 11.0019 18.9383C7.05466 18.4471 4 15.0803 4 11V10C4 9.44772 4.44772 9 5 9Z' fill='#152C70'/> </svg> ";
-const recordButtonSendSvg = "<svg width='24px' height='24px' viewBox='0 0 48 48' fill='none' xmlns='http://www.w3.org/2000/svg'> <path d='M48 0H0V48H48V0Z' fill='white' fill-opacity='0.01'/> <path d='M43 5L29.7 43L22.1 25.9L5 18.3L43 5Z' stroke='#000000' stroke-width='4' stroke-linejoin='round'/> <path d='M43.0001 5L22.1001 25.9' stroke='#000000' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/> </svg>";
+const recordButtonRecordSvg = " <svg stroke='currentColor' stroke-width='1.3' viewBox='0 0 24 24'  fill='none' height='22px' width='22px'  xmlns='http://www.w3.org/2000/svg'> <path fill-rule='evenodd' clip-rule='evenodd' d='M8 6C8 3.79086 9.79086 2 12 2C14.2091 2 16 3.79086 16 6V11C16 13.2091 14.2091 15 12 15C9.79086 15 8 13.2091 8 11V6Z' fill='#152C70'/> 		<path d='M5 9C5.55228 9 6 9.44772 6 10V11C6 14.3137 8.68629 17 12 17C15.3137 17 18 14.3137 18 11V10C18 9.44772 18.4477 9 19 9C19.5523 9 20 9.44772 20 10V11C20 15.0803 16.9453 18.4471 12.9981 18.9383C12.9994 18.9587 13 18.9793 13 19V21C13 21.5523 12.5523 22 12 22C11.4477 22 11 21.5523 11 21V19C11 18.9793 11.0006 18.9587 11.0019 18.9383C7.05466 18.4471 4 15.0803 4 11V10C4 9.44772 4.44772 9 5 9Z' fill='#152C70'/> </svg> ";
+const recordButtonSendSvg = "<svg  stroke-width='1.3' viewBox='0 0 48 48'  fill='none' height='22px' width='22px'  xmlns='http://www.w3.org/2000/svg'> <path d='M48 0H0V48H48V0Z'  /> <path d='M43 5L29.7 43L22.1 25.9L5 18.3L43 5Z' stroke='currentColor' stroke-width='4' stroke-linejoin='round'  /> <path  d='M43.0001 5L22.1001 25.9' stroke='currentColor' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/> </svg>";
 
 // -------------------
 // CODE (DO NOT ALTER)
@@ -757,14 +757,14 @@ function recordButtonHandle(cancelOrHandleEvent) {
 	recordButton.innerHTML = RecordSendState == 0 ? recordButtonRecordSvg : recordButtonSendSvg;
 	if (RecordSendState == 0) {
 		if (cancelOrHandleEvent == 0) {
-			recordButton.style.opacity = '0.4';
+			recordButton.style.opacity = '0.2';
 			recordButton.style.backgroundColor = 'rgba(0, 0, 0, 0.0)';
 		} else {
-			recordButton.style.opacity = '0.8';
+			recordButton.style.opacity = '0.6';
 			recordButton.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
 		}
 	} else {
-		recordButton.style.backgroundColor = 'rgba(0, 0, 0, 1)';
+		recordButton.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
 	}
 	
 }
@@ -773,25 +773,31 @@ function recordButtonClick() {
 	recordButtonHandle(1);
 }
 
-function itemsSpeakCheck() {
+function itemsSpeakCheck() {	
+// 	const nav = document.querySelector('nav');
+
+// if (!(nav && nav.offsetHeight > 0)) {
+//   alert('The nav element is visible!');
+// }
+
 	const openaiLogos = document.querySelectorAll('div.text-gray-400.flex.self-end');
 	// console.log("openaiLogos length: " + openaiLogos.length);
 	for (let i = 0; i < openaiLogos.length; i++) {
 		const speakTextBaseButton = openaiLogos[i].querySelector('#SpeakTextBaseButton');
 		if (speakTextBaseButton == null) {
 			const speakDiv = document.createElement('div');
-			speakDiv.innerHTML = "<button id='SpeakTextBaseButton' style='opacity:0.3' class=> <svg width='20px' height='20px' version='1.1' id='Capa_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 314 314' style='enable-background:new 0 0 314 314;' xml:space='preserve'> <g> <path d='M156.02,50.16c-2.07-1.275-4.652-1.387-6.821-0.291l-101.92,51.363H16.815C7.543,101.232,0,108.775,0,118.045v77.912 c0,9.27,7.543,16.813,16.815,16.813h30.465l101.92,51.361c0.993,0.502,2.073,0.75,3.15,0.75c1.275,0,2.549-0.35,3.671-1.041 c2.069-1.273,3.329-3.529,3.329-5.959V56.121C159.35,53.691,158.09,51.434,156.02,50.16z M14,195.957v-77.912 c0-1.525,1.289-2.813,2.815-2.813h25.133v83.537H16.815C15.289,198.77,14,197.482,14,195.957z M145.35,246.514l-89.402-45.053 v-88.92l89.402-45.055V246.514z'/> <path d='M204.018,124.686c-2.756,2.711-2.792,7.143-0.08,9.899c5.587,5.68,8.791,13.85,8.791,22.414 c0,8.568-3.204,16.738-8.791,22.416c-2.712,2.756-2.676,7.188,0.08,9.898c1.363,1.342,3.136,2.012,4.909,2.012 c1.81,0,3.62-0.699,4.989-2.092c8.143-8.275,12.813-20.023,12.813-32.234c0-12.209-4.67-23.957-12.813-32.232 C211.204,122.01,206.773,121.973,204.018,124.686z'/> <path d='M241.011,107.881c-2.756,2.713-2.792,7.145-0.081,9.9c9.809,9.969,15.435,24.264,15.435,39.217 c0,14.957-5.626,29.252-15.435,39.223c-2.711,2.756-2.675,7.188,0.081,9.898c1.363,1.342,3.137,2.01,4.909,2.01 c1.811,0,3.62-0.697,4.99-2.09c12.363-12.566,19.454-30.441,19.454-49.041c0-18.596-7.091-36.469-19.454-49.035 C248.196,105.205,243.766,105.17,241.011,107.881z'/> <path d='M287.903,91.156c-2.712-2.758-7.145-2.793-9.899-0.082c-2.756,2.713-2.792,7.145-0.081,9.9 c14.03,14.26,22.077,34.68,22.077,56.023c0,21.346-8.047,41.768-22.077,56.029c-2.711,2.756-2.675,7.188,0.081,9.898 c1.363,1.342,3.137,2.01,4.909,2.01c1.811,0,3.62-0.697,4.99-2.09C304.488,205.988,314,181.988,314,156.998 C314,132.012,304.488,108.014,287.903,91.156z'/> </g> </svg></button>" 
+			speakDiv.innerHTML = "<button id='SpeakTextBaseButton' style='' class=> <svg width='20px' height='20px' version='1.1' id='Capa_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 314 314' style='enable-background:new 0 0 314 314;' xml:space='preserve'> <g> <path d='M156.02,50.16c-2.07-1.275-4.652-1.387-6.821-0.291l-101.92,51.363H16.815C7.543,101.232,0,108.775,0,118.045v77.912 c0,9.27,7.543,16.813,16.815,16.813h30.465l101.92,51.361c0.993,0.502,2.073,0.75,3.15,0.75c1.275,0,2.549-0.35,3.671-1.041 c2.069-1.273,3.329-3.529,3.329-5.959V56.121C159.35,53.691,158.09,51.434,156.02,50.16z M14,195.957v-77.912 c0-1.525,1.289-2.813,2.815-2.813h25.133v83.537H16.815C15.289,198.77,14,197.482,14,195.957z M145.35,246.514l-89.402-45.053 v-88.92l89.402-45.055V246.514z' fill='currentColor'/> <path  fill='currentColor' d='M204.018,124.686c-2.756,2.711-2.792,7.143-0.08,9.899c5.587,5.68,8.791,13.85,8.791,22.414 c0,8.568-3.204,16.738-8.791,22.416c-2.712,2.756-2.676,7.188,0.08,9.898c1.363,1.342,3.136,2.012,4.909,2.012 c1.81,0,3.62-0.699,4.989-2.092c8.143-8.275,12.813-20.023,12.813-32.234c0-12.209-4.67-23.957-12.813-32.232 C211.204,122.01,206.773,121.973,204.018,124.686z'/> <path  fill='currentColor' d='M241.011,107.881c-2.756,2.713-2.792,7.145-0.081,9.9c9.809,9.969,15.435,24.264,15.435,39.217 c0,14.957-5.626,29.252-15.435,39.223c-2.711,2.756-2.675,7.188,0.081,9.898c1.363,1.342,3.137,2.01,4.909,2.01 c1.811,0,3.62-0.697,4.99-2.09c12.363-12.566,19.454-30.441,19.454-49.041c0-18.596-7.091-36.469-19.454-49.035 C248.196,105.205,243.766,105.17,241.011,107.881z'/> <path  fill='currentColor'd='M287.903,91.156c-2.712-2.758-7.145-2.793-9.899-0.082c-2.756,2.713-2.792,7.145-0.081,9.9 c14.03,14.26,22.077,34.68,22.077,56.023c0,21.346-8.047,41.768-22.077,56.029c-2.711,2.756-2.675,7.188,0.081,9.898 c1.363,1.342,3.137,2.01,4.909,2.01c1.811,0,3.62-0.697,4.99-2.09C304.488,205.988,314,181.988,314,156.998 C314,132.012,304.488,108.014,287.903,91.156z'/> </g> </svg></button>" 
 			openaiLogos[i].append(speakDiv);
 
 			const speakTextBaseButton = speakDiv.querySelector('#SpeakTextBaseButton');
 			speakTextBaseButton.addEventListener('mouseenter', () => {
 				speakTextBaseButton.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
-				speakTextBaseButton.style.opacity = '0.8';
+				// speakTextBaseButton.style.opacity = '1';
 			});
 			speakTextBaseButton.addEventListener('mouseleave', () => {
 				speakTextBaseButton.style.backgroundColor = 'rgba(0, 0, 0, 0)';
 				if (RecordSendState == 0) {
-					speakTextBaseButton.style.opacity = '0.4';
+					// speakTextBaseButton.style.opacity = '0.8';
 				}
 			});
 
@@ -859,10 +865,10 @@ function CN_InitScript() {
 	};
 
 	// Add icons on the top right corner
-	jQuery("body").append("<span style='position: fixed; bottom: 160px; right: 16px;  font-size: 14px; text-align: center; z-index: 1111;   border: 0px; outline: none;' >" +
-		"<button style='padding: 4px; margin: 6px; background: rgba(0, 0, 0, 0); opacity: 0.4;  border-radius: 4px;' id='RecordButton'> 111111 </button> <br/>" +
-		"<button style='padding: 4px; margin: 6px; background: rgba(0, 0, 0, 0); opacity: 0.4; border-radius: 4px;' id='SettingButton'> " +
-		"<svg width='24px' height='24px' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'> <path fill-rule='evenodd' clip-rule='evenodd' d='M2.44044 10.2841L5.74755 4.28409C6.35499 3.18202 7.49767 2.5 8.73669 2.5H15.2633C16.5023 2.5 17.645 3.18202 18.2525 4.28409L21.5596 10.2841C22.1468 11.3495 22.1468 12.6505 21.5596 13.7159L18.2525 19.7159C17.645 20.818 16.5023 21.5 15.2633 21.5H8.73669C7.49767 21.5 6.35499 20.818 5.74755 19.7159L2.44044 13.7159C1.85319 12.6505 1.85319 11.3495 2.44044 10.2841ZM3.72151 11.0195L7.02861 5.01948C7.37572 4.38972 8.02868 4 8.73669 4H15.2633C15.9713 4 16.6243 4.38972 16.9714 5.01948L20.2785 11.0195C20.6141 11.6283 20.6141 12.3717 20.2785 12.9805L16.9714 18.9805C16.6243 19.6103 15.9713 20 15.2633 20H8.73669C8.02868 20 7.37572 19.6103 7.02861 18.9805L3.72151 12.9805C3.38593 12.3717 3.38593 11.6283 3.72151 11.0195Z' fill='#030D45'/> <path fill-rule='evenodd' clip-rule='evenodd' d='M12 9.75C10.7824 9.75 9.79526 10.7574 9.79526 12C9.79526 13.2426 10.7824 14.25 12 14.25C13.2176 14.25 14.2047 13.2426 14.2047 12C14.2047 10.7574 13.2176 9.75 12 9.75ZM8.32544 12C8.32544 9.92893 9.9706 8.25 12 8.25C14.0294 8.25 15.6746 9.92893 15.6746 12C15.6746 14.0711 14.0294 15.75 12 15.75C9.9706 15.75 8.32544 14.0711 8.32544 12Z' fill='#030D45'/> </svg>" +
+	jQuery("body").append("<span style='position: fixed; fixed; bottom: 112px; left: 260px; width: 30px;  font-size: 14px; text-align: center; z-index: 1111;   border: 0px; outline: none;' >" +
+		"<button style='padding: 4px; margin: 3px; background: rgba(0, 0, 0, 0); opacity: 0.2;  border-radius: 4px;' id='RecordButton'></button> " +
+		"<button style='padding: 4px; margin: 3px; background: rgba(0, 0, 0, 0); opacity: 0.2; border-radius: 4px;' id='SettingButton'> " +
+		"<svg stroke='currentColor' stroke-width='1.3' viewBox='0 0 24 24' height='22px' width='22px'  fill='none' xmlns='http://www.w3.org/2000/svg'> <path fill-rule='evenodd' clip-rule='evenodd' d='M2.44044 10.2841L5.74755 4.28409C6.35499 3.18202 7.49767 2.5 8.73669 2.5H15.2633C16.5023 2.5 17.645 3.18202 18.2525 4.28409L21.5596 10.2841C22.1468 11.3495 22.1468 12.6505 21.5596 13.7159L18.2525 19.7159C17.645 20.818 16.5023 21.5 15.2633 21.5H8.73669C7.49767 21.5 6.35499 20.818 5.74755 19.7159L2.44044 13.7159C1.85319 12.6505 1.85319 11.3495 2.44044 10.2841ZM3.72151 11.0195L7.02861 5.01948C7.37572 4.38972 8.02868 4 8.73669 4H15.2633C15.9713 4 16.6243 4.38972 16.9714 5.01948L20.2785 11.0195C20.6141 11.6283 20.6141 12.3717 20.2785 12.9805L16.9714 18.9805C16.6243 19.6103 15.9713 20 15.2633 20H8.73669C8.02868 20 7.37572 19.6103 7.02861 18.9805L3.72151 12.9805C3.38593 12.3717 3.38593 11.6283 3.72151 11.0195Z' fill='#030D45'/> <path fill-rule='evenodd' clip-rule='evenodd' d='M12 9.75C10.7824 9.75 9.79526 10.7574 9.79526 12C9.79526 13.2426 10.7824 14.25 12 14.25C13.2176 14.25 14.2047 13.2426 14.2047 12C14.2047 10.7574 13.2176 9.75 12 9.75ZM8.32544 12C8.32544 9.92893 9.9706 8.25 12 8.25C14.0294 8.25 15.6746 9.92893 15.6746 12C15.6746 14.0711 14.0294 15.75 12 15.75C9.9706 15.75 8.32544 14.0711 8.32544 12Z' fill='#030D45'/> </svg>" +
 		"</button>" +
 		"<div id='toast-message' style='display: none; position: fixed; opacity: 1; bottom: 20px; left: 40%; transform: translateX(-50%); padding: 10px; background-color: #333; color: #fff; border-radius: 5px; z-index: 9999;'></div>" +
 		// " <a href='https://github.com/C-Nedelcu/talk-to-chatgpt' target=_blank title='Visit project website'>Talk-to-ChatGPT v1.6.1</a><br />" +
@@ -900,12 +906,12 @@ function CN_InitScript() {
 	recordButton.style.backgroundColor = 'rgba(0, 0, 0, 0);';
 	recordButton.addEventListener('mouseenter', () => {
 		recordButton.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
-		recordButton.style.opacity = '0.8';
+		recordButton.style.opacity = '0.6';
 	});
 	recordButton.addEventListener('mouseleave', () => {
 		recordButton.style.backgroundColor = 'rgba(0, 0, 0, 0)';
 		if (RecordSendState == 0) {
-			recordButton.style.opacity = '0.3';
+			recordButton.style.opacity = '0.2';
 		}
 	});
 	recordButton.addEventListener('focus', () => {
@@ -920,11 +926,11 @@ function CN_InitScript() {
 	settingButton.style.backgroundColor = 'rgba(0, 0, 0, 0)';
 	settingButton.addEventListener('mouseenter', () => {
 		settingButton.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
-		settingButton.style.opacity = '0.8';
+		settingButton.style.opacity = '0.6';
 	});
 	settingButton.addEventListener('mouseleave', () => {
 		settingButton.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-		settingButton.style.opacity = '0.3';
+		settingButton.style.opacity = '0.2';
 	});
 	settingButton.addEventListener('focus', () => {
 		settingButton.style.outline = 'none';
@@ -944,6 +950,7 @@ function CN_InitScript() {
 	setInterval(itemsSpeakCheck, 500); // calls myFunction every 1 second (1000 milliseconds)
 
 
+		
 
 	setTimeout(function () {
 		// // create element
@@ -1076,7 +1083,7 @@ function CN_OnSettingsIconClick() {
 		"some the voices and speech recognition languages do not appear to work. If the one you select doesn't work, try reloading the page. <br />" +
 		"If it still doesn't work after reloading the page, please try selecting another voice or language. <br />" +
 		"Also, sometimes the text-to-speech API takes time to kick in, give it a few seconds to hear the bot speak.<br />" + 
-		"<b>Also, like Voice-to-ChatGPT says that 'Remember this is an experimental extension created just for fun.</b>' <div>" +
+		" <div>" +
 		"</div>";
 
 	// Open a whole screenful of settings
