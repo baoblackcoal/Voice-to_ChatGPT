@@ -196,16 +196,19 @@ function sayItem(text) {
 }
 
 // Check for new messages the bot has sent. If a new message is found, it will be read out loud
-function CN_CheckNewMessages() {
+function CN_CheckNewMessages(isInit = false) {
 	// Any new messages?
 	var currentMessageCount = jQuery(".text-base").length;
+	// console.log("isInit="+isInit)
 	// console.log("Current message count: " + currentMessageCount + ", previous message count: " + CN_MESSAGE_COUNT)
 	if (currentMessageCount != CN_MESSAGE_COUNT) {
-		// New message!
 		CN_MESSAGE_COUNT = currentMessageCount;
-		CN_CURRENT_MESSAGE = jQuery(".text-base:last");
-		CN_CURRENT_MESSAGE_SENTENCES = []; // Reset list of parts already spoken
-		CN_CURRENT_MESSAGE_SENTENCES_NEXT_READ = 0;
+		if (!isInit) {
+			// New message!
+			CN_CURRENT_MESSAGE = jQuery(".text-base:last");
+			CN_CURRENT_MESSAGE_SENTENCES = []; // Reset list of parts already spoken
+			CN_CURRENT_MESSAGE_SENTENCES_NEXT_READ = 0;
+		}
 	}
 
 	// Split current message into parts
@@ -616,6 +619,7 @@ function speakStop() {
 	window.speechSynthesis.pause(); // Pause, and then...
 	window.speechSynthesis.cancel(); // Cancel everything
 	CN_CURRENT_MESSAGE = null; // Remove current message
+	CN_IS_READING = false;
 }
 
 function speakOn() {
@@ -710,7 +714,7 @@ function CN_StartTTGPT() {
 		CN_StartSpeechRecognition();
 
 		// Check for new messages
-		CN_CheckNewMessages();
+		CN_CheckNewMessages(true);
 	}, 1000);
 
 	// Disable speech rec
@@ -774,7 +778,7 @@ function recordButtonClick() {
 	recordButtonHandle(1);
 }
 
-function itemsSpeakCheck() {	
+function itemsSpeakAndNavCheck() {	
 	const nav = document.querySelector('nav');
 	const voiceZone = document.querySelector('.VoiceZone');
 	if (!nav && voiceZone.style.left != '0px') {
@@ -869,10 +873,10 @@ function CN_InitScript() {
 
 	// Add icons on the top right corner
 	jQuery("body").append("<span class = 'VoiceZone' style='position: fixed; fixed; bottom: 112px; left: 260px; width: 30px;  font-size: 14px; text-align: center; z-index: 1111;   border: 0px; outline: none;' >" +
-		"<button style='padding: 4px; margin: 3px; background: rgba(0, 0, 0, 0); opacity: 0.2;  border-radius: 4px;' id='RecordButton'></button> " +
 		"<button style='padding: 4px; margin: 3px; background: rgba(0, 0, 0, 0); opacity: 0.2; border-radius: 4px;' id='SettingButton'> " +
 		"<svg stroke='currentColor' stroke-width='1.3' viewBox='0 0 24 24' height='22px' width='22px'  fill='none' xmlns='http://www.w3.org/2000/svg'> <path fill-rule='evenodd' clip-rule='evenodd' d='M2.44044 10.2841L5.74755 4.28409C6.35499 3.18202 7.49767 2.5 8.73669 2.5H15.2633C16.5023 2.5 17.645 3.18202 18.2525 4.28409L21.5596 10.2841C22.1468 11.3495 22.1468 12.6505 21.5596 13.7159L18.2525 19.7159C17.645 20.818 16.5023 21.5 15.2633 21.5H8.73669C7.49767 21.5 6.35499 20.818 5.74755 19.7159L2.44044 13.7159C1.85319 12.6505 1.85319 11.3495 2.44044 10.2841ZM3.72151 11.0195L7.02861 5.01948C7.37572 4.38972 8.02868 4 8.73669 4H15.2633C15.9713 4 16.6243 4.38972 16.9714 5.01948L20.2785 11.0195C20.6141 11.6283 20.6141 12.3717 20.2785 12.9805L16.9714 18.9805C16.6243 19.6103 15.9713 20 15.2633 20H8.73669C8.02868 20 7.37572 19.6103 7.02861 18.9805L3.72151 12.9805C3.38593 12.3717 3.38593 11.6283 3.72151 11.0195Z' fill='#030D45'/> <path fill-rule='evenodd' clip-rule='evenodd' d='M12 9.75C10.7824 9.75 9.79526 10.7574 9.79526 12C9.79526 13.2426 10.7824 14.25 12 14.25C13.2176 14.25 14.2047 13.2426 14.2047 12C14.2047 10.7574 13.2176 9.75 12 9.75ZM8.32544 12C8.32544 9.92893 9.9706 8.25 12 8.25C14.0294 8.25 15.6746 9.92893 15.6746 12C15.6746 14.0711 14.0294 15.75 12 15.75C9.9706 15.75 8.32544 14.0711 8.32544 12Z' fill='#030D45'/> </svg>" +
 		"</button>" +
+		"<button style='padding: 4px; margin: 3px; background: rgba(0, 0, 0, 0); opacity: 0.2;  border-radius: 4px;' id='RecordButton'></button> " +
 		"<div id='toast-message' style='display: none; position: fixed; opacity: 1; bottom: 20px; left: 40%; transform: translateX(-50%); padding: 10px; background-color: #333; color: #fff; border-radius: 5px; z-index: 9999;'></div>" +
 		// " <a href='https://github.com/C-Nedelcu/talk-to-chatgpt' target=_blank title='Visit project website'>Talk-to-ChatGPT v1.6.1</a><br />" +
 		// "<span style='font-size: 16px;' class='CNStartZone'>" +
@@ -939,9 +943,9 @@ function CN_InitScript() {
 		settingButton.style.outline = 'none';
 		settingButton.style.border = 'none';
 	});
-	settingButton.addEventListener('click', () => {
-		CN_OnSettingsIconClick()
-	});
+	// settingButton.addEventListener('click', () => {
+	// 	CN_OnSettingsIconClick()
+	// });
 
 	// jQuery("textarea").on('click', () => {
 	// 	console.log("textarea clicked");
@@ -950,9 +954,53 @@ function CN_InitScript() {
 	// 	}
 	// });
 	
-	setInterval(itemsSpeakCheck, 500); // calls myFunction every 1 second (1000 milliseconds)
+	setInterval(itemsSpeakAndNavCheck, 500); // calls myFunction every 1 second (1000 milliseconds)
 
 
+	//menu
+	const menu = document.createElement("div");
+	menu.classList.add("menu");
+	menu.innerHTML = `
+		<ul style="list-style: none;  padding: 0; margin: 0;  border: 1px solid #CCC;  border-radius: 4px; width: 130px; color:black; user-select: none;">
+		<li data-option="Setting" style="padding: 10px; background-color: #eee; border-bottom: 1px solid #ccc; cursor: pointer;">Setting</li>
+		<li data-option="StopSpeaking" style="padding: 10px; background-color: #eee; border-bottom: 1px solid #ccc; cursor: pointer;">Stop Speaking</li>
+		</ul>
+	`;
+	menu.style.display = "none";
+	settingButton.addEventListener("click", (event) => {
+		event.stopPropagation();
+		if (menu.style.display === "none") {
+			menu.style.display = "block";
+		} else {
+			menu.style.display = "none";
+		}
+	});
+	// document.body.appendChild(button);
+	const voiceZone = document.querySelector('.VoiceZone');
+	// voiceZone.appendChild(menu);
+	voiceZone.insertBefore(menu, settingButton);
+	menu.addEventListener("click", (event) => {
+		const option = event.target.dataset.option;
+		if (option) {
+			switch (option) {
+				case "Setting":
+					CN_OnSettingsIconClick();
+					break;
+				case "StopSpeaking":
+					console.log("CN_IS_READING="+CN_IS_READING);
+					if (!CN_IS_READING) {
+						showToastMessage("Not speaking");
+					} else {
+						speakStop();
+					}
+					break;
+			}				
+			menu.style.display = "none";
+		}
+	});
+	document.addEventListener("click", () => {
+		menu.style.display = "none";
+	});
 		
 
 	setTimeout(function () {
