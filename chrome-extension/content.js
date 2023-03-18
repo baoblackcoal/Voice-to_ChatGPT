@@ -87,7 +87,7 @@ function CN_SayOutLoud(text) {
 	}
 
 	// Let's speak out loud
-	console.log("Saying out loud: " + text);
+	console.log("Saying out loud1: " + text);
 	var msg = new SpeechSynthesisUtterance();
 	msg.text = text;
 
@@ -483,7 +483,7 @@ function CN_checkRecognition(event) {
 function CN_HoldToTalkHandle(sendOrCancel) {
 	// $(this).css("display", "none");
 	// $(".CNToggle[data-cn=sayfinish]").css("display", "");
-	console.log("CN_HoldToTalkButtonKeyUp");
+	// console.log("CN_HoldToTalkButtonKeyUp");
 
 	jQuery("#CancelButton").hide()
 	jQuery("#EditButton").hide()
@@ -529,7 +529,7 @@ function sendRecordText() {
 }
 
 function recordToEdit() {
-	console.log("CN_EditlButtonMouseOver");
+	// console.log("CN_EditlButtonMouseOver");
 	if (CHECK_RECOGNITION_STATE == 1) {
 		jQuery("textarea").val("");
 		showToastMessage("You haven't spoken yet.");
@@ -761,6 +761,39 @@ function recordButtonClick() {
 	recordButtonHandle(1);
 }
 
+function itemsSpeakCheck() {
+	const openaiLogos = document.querySelectorAll('div.text-gray-400.flex.self-end');
+	console.log("openaiLogos length: " + openaiLogos.length);
+	for (let i = 0; i < openaiLogos.length; i++) {
+		const speakTextBaseButton = openaiLogos[i].querySelector('#SpeakTextBaseButton');
+		if (speakTextBaseButton == null) {
+			const speakDiv = document.createElement('div');
+			speakDiv.innerHTML = "<button id='SpeakTextBaseButton' style='opacity:0.5' class='p-1 rounded-md hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400'> <svg width='20px' height='20px' version='1.1' id='Capa_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 314 314' style='enable-background:new 0 0 314 314;' xml:space='preserve'> <g> <path d='M156.02,50.16c-2.07-1.275-4.652-1.387-6.821-0.291l-101.92,51.363H16.815C7.543,101.232,0,108.775,0,118.045v77.912 c0,9.27,7.543,16.813,16.815,16.813h30.465l101.92,51.361c0.993,0.502,2.073,0.75,3.15,0.75c1.275,0,2.549-0.35,3.671-1.041 c2.069-1.273,3.329-3.529,3.329-5.959V56.121C159.35,53.691,158.09,51.434,156.02,50.16z M14,195.957v-77.912 c0-1.525,1.289-2.813,2.815-2.813h25.133v83.537H16.815C15.289,198.77,14,197.482,14,195.957z M145.35,246.514l-89.402-45.053 v-88.92l89.402-45.055V246.514z'/> <path d='M204.018,124.686c-2.756,2.711-2.792,7.143-0.08,9.899c5.587,5.68,8.791,13.85,8.791,22.414 c0,8.568-3.204,16.738-8.791,22.416c-2.712,2.756-2.676,7.188,0.08,9.898c1.363,1.342,3.136,2.012,4.909,2.012 c1.81,0,3.62-0.699,4.989-2.092c8.143-8.275,12.813-20.023,12.813-32.234c0-12.209-4.67-23.957-12.813-32.232 C211.204,122.01,206.773,121.973,204.018,124.686z'/> <path d='M241.011,107.881c-2.756,2.713-2.792,7.145-0.081,9.9c9.809,9.969,15.435,24.264,15.435,39.217 c0,14.957-5.626,29.252-15.435,39.223c-2.711,2.756-2.675,7.188,0.081,9.898c1.363,1.342,3.137,2.01,4.909,2.01 c1.811,0,3.62-0.697,4.99-2.09c12.363-12.566,19.454-30.441,19.454-49.041c0-18.596-7.091-36.469-19.454-49.035 C248.196,105.205,243.766,105.17,241.011,107.881z'/> <path d='M287.903,91.156c-2.712-2.758-7.145-2.793-9.899-0.082c-2.756,2.713-2.792,7.145-0.081,9.9 c14.03,14.26,22.077,34.68,22.077,56.023c0,21.346-8.047,41.768-22.077,56.029c-2.711,2.756-2.675,7.188,0.081,9.898 c1.363,1.342,3.137,2.01,4.909,2.01c1.811,0,3.62-0.697,4.99-2.09C304.488,205.988,314,181.988,314,156.998 C314,132.012,304.488,108.014,287.903,91.156z'/> </g> </svg></button>" 
+			openaiLogos[i].append(speakDiv);
+
+			//SpeakTextBaseButton onclick
+			speakDiv.querySelector('#SpeakTextBaseButton').addEventListener('click', function() {
+				console.log("SpeakTextBaseButton clicked");
+				// get the element containing the text
+				const textRespose = $(this).closest('.group').find('.prose p').text().trim();
+				const textUser = $(this).closest('.group').find('.min-h-\\[20px\\]').text().trim();
+				console.log(textRespose);
+				console.log(textUser);
+
+				text = textUser == "" ? textRespose : textUser;
+				// extract the text
+				// const text = element.text().trim();
+				// const element =  openaiLogos[i].querySelector('.prose p');
+				// // extract the text
+				// const text = element.textContent.trim();
+				// print the text to the console
+				console.log(text);
+				CN_SayOutLoud(text);
+			});
+		}
+	 }
+}
+
 // Perform initialization after jQuery is loaded
 function CN_InitScript() {
 	if (typeof $ === null || typeof $ === undefined) $ = jQuery;
@@ -883,6 +916,8 @@ function CN_InitScript() {
 			recordButtonClick();
 		}
 	});
+	
+	setInterval(itemsSpeakCheck, 500); // calls myFunction every 1 second (1000 milliseconds)
 
 
 
@@ -914,12 +949,8 @@ function CN_InitScript() {
 		// targetDiv.append(newDiv);
 
 
-		// const openaiLogos = document.querySelectorAll('.w-\\[30px\\].flex.flex-col.relative.items-end');
-		// for (let i = 0; i < openaiLogos.length; i++) {
-		// 	const speakDiv = document.createElement('div');
-		// 	speakDiv.innerHTML = "<div class='SpeakTextBaseButton' style='margin-top: 8px; font-size: 20px; user-select: none;' title='Click to speak'> 🔊 </div>";
-		// 	openaiLogos[i].append(speakDiv);
-		// }
+
+
 
 		// Try and get voices
 		speechSynthesis.getVoices();
@@ -956,6 +987,7 @@ function CN_InitScript() {
 // Open settings menu
 function CN_OnSettingsIconClick() {
 	console.log("Opening settings menu");
+	console.log("CN_SPEAKING_DISABLED: " + CN_SPEAKING_DISABLED);
 
 	// Stop listening
 	CN_PAUSED = true;
@@ -1046,9 +1078,12 @@ function CN_SaveSettings() {
 		var allVoices = speechSynthesis.getVoices();
 		CN_WANTED_VOICE = allVoices[wantedVoiceIndex];
 		CN_WANTED_VOICE_NAME = CN_WANTED_VOICE.lang + "-" + CN_WANTED_VOICE.name;
-		CN_SPEAKING_DISABLED = !(jQuery("#TextToSpeeh").checked);
+
+		var checkBox = document.getElementById("TextToSpeeh");
+		CN_SPEAKING_DISABLED = !(checkBox.checked);
 		if (CN_SPEAKING_DISABLED) 
 			speakStop();
+
 		CN_TEXT_TO_SPEECH_RATE = Number(jQuery("#TTGPTRate").val());
 		CN_TEXT_TO_SPEECH_PITCH = Number(jQuery("#TTGPTPitch").val());
 
