@@ -38,6 +38,8 @@ var CN_WANTED_VOICE_NAME = "";
 
 var CN_SPEAKING_DISABLED = false;
 
+var CN_SPEAKING_ITEM_DISABLED = true;
+
 // ----------------------------
 
 
@@ -73,7 +75,9 @@ var RecordSendState = 0; //0: recording, 1: sending
 
 // This function will say the given text out loud using the browser's speech synthesis API
 function CN_SayOutLoud(text) {
-	if (!text || CN_SPEAKING_DISABLED) {
+	if (!CN_SPEAKING_ITEM_DISABLED) {
+		CN_SPEAKING_ITEM_DISABLED = true;
+	} else if (!text || CN_SPEAKING_DISABLED ) {
 		if (CN_SPEECH_REC_SUPPORTED && CN_SPEECHREC && !CN_IS_LISTENING && !CN_PAUSED && !CN_SPEECHREC_DISABLED) CN_SPEECHREC.start();
 		clearTimeout(CN_TIMEOUT_KEEP_SPEECHREC_WORKING);
 		CN_TIMEOUT_KEEP_SPEECHREC_WORKING = setTimeout(CN_KeepSpeechRecWorking, 100);
@@ -181,6 +185,14 @@ function CN_SplitIntoSentences(text) {
 	}
 
 	return sentences;
+}
+
+function sayItem(text) {
+	window.speechSynthesis.pause(); // Pause, and then...
+	window.speechSynthesis.cancel(); // Cancel everything
+	CN_CURRENT_MESSAGE = null; // Remove current message
+	CN_SPEAKING_ITEM_DISABLED = false; // Enable speaking items
+	CN_SayOutLoud(text);
 }
 
 // Check for new messages the bot has sent. If a new message is found, it will be read out loud
@@ -763,32 +775,44 @@ function recordButtonClick() {
 
 function itemsSpeakCheck() {
 	const openaiLogos = document.querySelectorAll('div.text-gray-400.flex.self-end');
-	console.log("openaiLogos length: " + openaiLogos.length);
+	// console.log("openaiLogos length: " + openaiLogos.length);
 	for (let i = 0; i < openaiLogos.length; i++) {
 		const speakTextBaseButton = openaiLogos[i].querySelector('#SpeakTextBaseButton');
 		if (speakTextBaseButton == null) {
 			const speakDiv = document.createElement('div');
-			speakDiv.innerHTML = "<button id='SpeakTextBaseButton' style='opacity:0.5' class='p-1 rounded-md hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400'> <svg width='20px' height='20px' version='1.1' id='Capa_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 314 314' style='enable-background:new 0 0 314 314;' xml:space='preserve'> <g> <path d='M156.02,50.16c-2.07-1.275-4.652-1.387-6.821-0.291l-101.92,51.363H16.815C7.543,101.232,0,108.775,0,118.045v77.912 c0,9.27,7.543,16.813,16.815,16.813h30.465l101.92,51.361c0.993,0.502,2.073,0.75,3.15,0.75c1.275,0,2.549-0.35,3.671-1.041 c2.069-1.273,3.329-3.529,3.329-5.959V56.121C159.35,53.691,158.09,51.434,156.02,50.16z M14,195.957v-77.912 c0-1.525,1.289-2.813,2.815-2.813h25.133v83.537H16.815C15.289,198.77,14,197.482,14,195.957z M145.35,246.514l-89.402-45.053 v-88.92l89.402-45.055V246.514z'/> <path d='M204.018,124.686c-2.756,2.711-2.792,7.143-0.08,9.899c5.587,5.68,8.791,13.85,8.791,22.414 c0,8.568-3.204,16.738-8.791,22.416c-2.712,2.756-2.676,7.188,0.08,9.898c1.363,1.342,3.136,2.012,4.909,2.012 c1.81,0,3.62-0.699,4.989-2.092c8.143-8.275,12.813-20.023,12.813-32.234c0-12.209-4.67-23.957-12.813-32.232 C211.204,122.01,206.773,121.973,204.018,124.686z'/> <path d='M241.011,107.881c-2.756,2.713-2.792,7.145-0.081,9.9c9.809,9.969,15.435,24.264,15.435,39.217 c0,14.957-5.626,29.252-15.435,39.223c-2.711,2.756-2.675,7.188,0.081,9.898c1.363,1.342,3.137,2.01,4.909,2.01 c1.811,0,3.62-0.697,4.99-2.09c12.363-12.566,19.454-30.441,19.454-49.041c0-18.596-7.091-36.469-19.454-49.035 C248.196,105.205,243.766,105.17,241.011,107.881z'/> <path d='M287.903,91.156c-2.712-2.758-7.145-2.793-9.899-0.082c-2.756,2.713-2.792,7.145-0.081,9.9 c14.03,14.26,22.077,34.68,22.077,56.023c0,21.346-8.047,41.768-22.077,56.029c-2.711,2.756-2.675,7.188,0.081,9.898 c1.363,1.342,3.137,2.01,4.909,2.01c1.811,0,3.62-0.697,4.99-2.09C304.488,205.988,314,181.988,314,156.998 C314,132.012,304.488,108.014,287.903,91.156z'/> </g> </svg></button>" 
+			speakDiv.innerHTML = "<button id='SpeakTextBaseButton' style='opacity:0.3' class=> <svg width='20px' height='20px' version='1.1' id='Capa_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 314 314' style='enable-background:new 0 0 314 314;' xml:space='preserve'> <g> <path d='M156.02,50.16c-2.07-1.275-4.652-1.387-6.821-0.291l-101.92,51.363H16.815C7.543,101.232,0,108.775,0,118.045v77.912 c0,9.27,7.543,16.813,16.815,16.813h30.465l101.92,51.361c0.993,0.502,2.073,0.75,3.15,0.75c1.275,0,2.549-0.35,3.671-1.041 c2.069-1.273,3.329-3.529,3.329-5.959V56.121C159.35,53.691,158.09,51.434,156.02,50.16z M14,195.957v-77.912 c0-1.525,1.289-2.813,2.815-2.813h25.133v83.537H16.815C15.289,198.77,14,197.482,14,195.957z M145.35,246.514l-89.402-45.053 v-88.92l89.402-45.055V246.514z'/> <path d='M204.018,124.686c-2.756,2.711-2.792,7.143-0.08,9.899c5.587,5.68,8.791,13.85,8.791,22.414 c0,8.568-3.204,16.738-8.791,22.416c-2.712,2.756-2.676,7.188,0.08,9.898c1.363,1.342,3.136,2.012,4.909,2.012 c1.81,0,3.62-0.699,4.989-2.092c8.143-8.275,12.813-20.023,12.813-32.234c0-12.209-4.67-23.957-12.813-32.232 C211.204,122.01,206.773,121.973,204.018,124.686z'/> <path d='M241.011,107.881c-2.756,2.713-2.792,7.145-0.081,9.9c9.809,9.969,15.435,24.264,15.435,39.217 c0,14.957-5.626,29.252-15.435,39.223c-2.711,2.756-2.675,7.188,0.081,9.898c1.363,1.342,3.137,2.01,4.909,2.01 c1.811,0,3.62-0.697,4.99-2.09c12.363-12.566,19.454-30.441,19.454-49.041c0-18.596-7.091-36.469-19.454-49.035 C248.196,105.205,243.766,105.17,241.011,107.881z'/> <path d='M287.903,91.156c-2.712-2.758-7.145-2.793-9.899-0.082c-2.756,2.713-2.792,7.145-0.081,9.9 c14.03,14.26,22.077,34.68,22.077,56.023c0,21.346-8.047,41.768-22.077,56.029c-2.711,2.756-2.675,7.188,0.081,9.898 c1.363,1.342,3.137,2.01,4.909,2.01c1.811,0,3.62-0.697,4.99-2.09C304.488,205.988,314,181.988,314,156.998 C314,132.012,304.488,108.014,287.903,91.156z'/> </g> </svg></button>" 
 			openaiLogos[i].append(speakDiv);
 
+			const speakTextBaseButton = speakDiv.querySelector('#SpeakTextBaseButton');
+			speakTextBaseButton.addEventListener('mouseenter', () => {
+				speakTextBaseButton.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+				speakTextBaseButton.style.opacity = '0.8';
+			});
+			speakTextBaseButton.addEventListener('mouseleave', () => {
+				speakTextBaseButton.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+				if (RecordSendState == 0) {
+					speakTextBaseButton.style.opacity = '0.4';
+				}
+			});
+
+			//SpeakTextBaseButton class
+			const speakUserClass = "p-1 rounded-md hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400 md:invisible md:group-hover:visible";
+			const speakResponseClass = "p-1 rounded-md hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 disabled:dark:hover:text-gray-400";
+			const textRespose = $(speakTextBaseButton).closest('.group').find('.prose p').text().trim();;
+			speakTextBaseButton.className = (textRespose == "") ? speakUserClass : speakResponseClass;
+			
 			//SpeakTextBaseButton onclick
-			speakDiv.querySelector('#SpeakTextBaseButton').addEventListener('click', function() {
+			speakTextBaseButton.addEventListener('click', function() {
 				console.log("SpeakTextBaseButton clicked");
+				this.style.outline = 'none';
+				this.style.border = 'none';
+				this.style.opacity = '1';
 				// get the element containing the text
 				const textRespose = $(this).closest('.group').find('.prose p').text().trim();
 				const textUser = $(this).closest('.group').find('.min-h-\\[20px\\]').text().trim();
-				console.log(textRespose);
-				console.log(textUser);
-
 				text = textUser == "" ? textRespose : textUser;
-				// extract the text
-				// const text = element.text().trim();
-				// const element =  openaiLogos[i].querySelector('.prose p');
-				// // extract the text
-				// const text = element.textContent.trim();
-				// print the text to the console
 				console.log(text);
-				CN_SayOutLoud(text);
+				sayItem(text);
 			});
 		}
 	 }
@@ -881,7 +905,7 @@ function CN_InitScript() {
 	recordButton.addEventListener('mouseleave', () => {
 		recordButton.style.backgroundColor = 'rgba(0, 0, 0, 0)';
 		if (RecordSendState == 0) {
-			recordButton.style.opacity = '0.4';
+			recordButton.style.opacity = '0.3';
 		}
 	});
 	recordButton.addEventListener('focus', () => {
@@ -900,7 +924,7 @@ function CN_InitScript() {
 	});
 	settingButton.addEventListener('mouseleave', () => {
 		settingButton.style.backgroundColor = 'rgba(0, 0, 0, 0)';
-		settingButton.style.opacity = '0.4';
+		settingButton.style.opacity = '0.3';
 	});
 	settingButton.addEventListener('focus', () => {
 		settingButton.style.outline = 'none';
@@ -1006,15 +1030,15 @@ function CN_OnSettingsIconClick() {
 		voices += "<option value='" + n + "' " + SEL + ">" + label + "</option>";
 		n++;
 	});
-	rows += "<tr><td>AI voice and language:</td><td><select id='TTGPTVoice' style='width: 300px; color: black'>" + voices + "</select></td></tr>";
+	rows += "<tr><td>AI voice and language:</td><td><select id='TTGPTVoice' style='width: 300px; color: black; border-radius: 4px; '>" + voices + "</select></td></tr>";
 
-	rows += "<tr><td>Text-to-speech:</td><td><input  type='checkbox' id='TextToSpeeh' style='padding: 10px; color: black; border:2px solid white;'></input></td></tr>";
+	rows += "<tr><td>Auto Text-to-speech:</td><td><input  type='checkbox' id='TextToSpeeh' style='padding: 10px; color: black; border:2px solid white; border-radius: 4px; '></input></td></tr>";
 
 	// 2. AI talking speed
-	rows += "<tr><td>AI talking speed (speech rate):</td><td><input type=number step='.1' id='TTGPTRate' style='color: black; width: 100px;' value='" + CN_TEXT_TO_SPEECH_RATE + "' /></td></tr>";
+	rows += "<tr><td>AI talking speed (speech rate):</td><td><input type=number step='.1' id='TTGPTRate' style='color: black; width: 100px; border-radius: 4px; ' value='" + CN_TEXT_TO_SPEECH_RATE + "' /></td></tr>";
 
 	// 3. AI voice pitch
-	rows += "<tr><td>AI voice pitch:</td><td><input type=number step='.1' id='TTGPTPitch' style='width: 100px; color: black;' value='" + CN_TEXT_TO_SPEECH_PITCH + "' /></td></tr>";
+	rows += "<tr><td>AI voice pitch:</td><td><input type=number step='.1' id='TTGPTPitch' style='width: 100px; color: black; border-radius: 4px; ' value='" + CN_TEXT_TO_SPEECH_PITCH + "' /></td></tr>";
 
 	// 4. Speech recognition language CN_WANTED_LANGUAGE_SPEECH_REC
 	var languages = "<option value=''></option>";
@@ -1027,7 +1051,7 @@ function CN_OnSettingsIconClick() {
 			languages += "<option value='" + languageCode + "' " + SEL + ">" + languageName + " - " + languageCode + "</option>";
 		}
 	}
-	rows += "<tr><td>Speech recognition language:</td><td><select id='TTGPTRecLang' style='width: 300px; color: black;' >" + languages + "</select></td></tr>";
+	rows += "<tr><td>Speech recognition language:</td><td><select id='TTGPTRecLang' style='width: 300px; color: black; border-radius: 4px; ' >" + languages + "</select></td></tr>";
 
 	// 5. 'Stop' word
 	// rows += "<tr><td>'Stop' word:</td><td><input type=text id='TTGPTStopWord' style='width: 100px; color: black;' value='"+CN_SAY_THIS_WORD_TO_STOP+"' /></td></tr>";
@@ -1042,21 +1066,21 @@ function CN_OnSettingsIconClick() {
 	// rows += "<tr><td>Manual send word(s):</td><td><input type=text id='TTGPTSendWord' style='width: 300px; color: black;' value='"+CN_SAY_THIS_TO_SEND+"' /> If 'automatic send' is disabled, you can trigger the sending of the message by saying this word (or sequence of words)</td></tr>";
 
 	// Prepare save/close buttons
-	var closeRow = "<tr><td colspan=2 style='text-align: center'><br /><button id='TTGPTSave' style='font-weight: bold;'>✓ Save</button>&nbsp;<button id='TTGPTCancel' style='margin-left: 20px;'>✗ Cancel</button></td></tr>";
+	var closeRow = "<tr><td colspan=2 style='text-align: center'><br /><button id='TTGPTSave' style='border: 1px solid #CCC; padding: 4px; background: #FFF; border-radius: 4px; color:black; width: 80px;'>Save</button>&nbsp;<button id='TTGPTCancel' style='margin-left: 20px; border: 1px solid #CCC; padding: 4px; margin-left: 100px; background: #FFF; border-radius: 4px; color:black; width: 80px;'>Cancel</button></td></tr>";
 
 	// Prepare settings table
-	var table = "<table cellpadding=6 cellspacing=0 style='margin: 30px;'>" + rows + closeRow + "</table>";
+	var table = "<table cellpadding=6 cellspacing=0 style='margin: 30px; font-size:20px; color: white;'>" + rows + closeRow + "</table>";
 
 	// A short text at the beginning
-	var desc = "<div style='margin: 8px;'><b>Voice-To-ChatGPT, Hold to Talk, and Release to Send. </b>  <br />  <br /> Please note: Voice-to-ChatGPT is inspired by <a href='https://chrome.google.com/webstore/detail/talk-to-chatgpt/hodadfhfagpiemkeoliaelelfbboamlk'>Talk-to-ChatGPT</a> and most souce code come from Talk-to-ChatGPT, thanks to Talk-to-ChatGPT. <br />" + 
+	var desc = "<div style='margin: 8px;'><b>Enjoy chatting with ChatGPT using your voice. </b>  <br /> <div style='color: gray;'> <br /> Please note: Voice-to-ChatGPT is inspired by <a href='https://chrome.google.com/webstore/detail/talk-to-chatgpt/hodadfhfagpiemkeoliaelelfbboamlk'>Talk-to-ChatGPT</a> and most souce code come from Talk-to-ChatGPT, thanks to Talk-to-ChatGPT. <br />" + 
 		"some the voices and speech recognition languages do not appear to work. If the one you select doesn't work, try reloading the page. <br />" +
 		"If it still doesn't work after reloading the page, please try selecting another voice or language. <br />" +
 		"Also, sometimes the text-to-speech API takes time to kick in, give it a few seconds to hear the bot speak.<br />" + 
-		"<b>Also, like Voice-to-ChatGPT says that 'Remember this is an experimental extension created just for fun.</b>' " +
+		"<b>Also, like Voice-to-ChatGPT says that 'Remember this is an experimental extension created just for fun.</b>' <div>" +
 		"</div>";
 
 	// Open a whole screenful of settings
-	jQuery("body").append("<div style='background: rgba(0,0,0,0.7); position: absolute; top: 0; right: 0; left: 0; bottom: 0; z-index: 999999; padding: 20px; color: white; font-size: 14px;' id='TTGPTSettingsArea'><h1>⚙️ Voice-to-ChatGPT settings</h1>" + desc + table + "</div>");
+	jQuery("body").append("<div style='background: rgba(0,0,0,0.7); position: absolute; top: 0; right: 0; left: 0; bottom: 0; z-index: 999999; padding: 20px; color: white; font-size: 14px;  justify-content: center; align-items: center; display: flex;' id='TTGPTSettingsArea'><div style='margin: 8px; width: 1000px'><h1>⚙️ Voice-to-ChatGPT settings</h1>" + desc + table + "</div></div>");
 
 	var checkBox = document.getElementById("TextToSpeeh");
 	checkBox.checked = !CN_SPEAKING_DISABLED;
