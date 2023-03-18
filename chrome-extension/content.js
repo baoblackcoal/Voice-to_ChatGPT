@@ -91,7 +91,7 @@ function CN_SayOutLoud(text) {
 	}
 
 	// Let's speak out loud
-	console.log("Saying out loud1: " + text);
+	console.log("Saying out loud: " + text);
 	var msg = new SpeechSynthesisUtterance();
 	msg.text = text;
 
@@ -199,7 +199,8 @@ function sayItem(text) {
 function CN_CheckNewMessages() {
 	// Any new messages?
 	var currentMessageCount = jQuery(".text-base").length;
-	if (currentMessageCount > CN_MESSAGE_COUNT) {
+	// console.log("Current message count: " + currentMessageCount + ", previous message count: " + CN_MESSAGE_COUNT)
+	if (currentMessageCount != CN_MESSAGE_COUNT) {
 		// New message!
 		CN_MESSAGE_COUNT = currentMessageCount;
 		CN_CURRENT_MESSAGE = jQuery(".text-base:last");
@@ -942,12 +943,12 @@ function CN_InitScript() {
 		CN_OnSettingsIconClick()
 	});
 
-	jQuery("textarea").on('click', () => {
-		console.log("textarea clicked");
-		if (RecordSendState == 1) {
-			recordButtonClick();
-		}
-	});
+	// jQuery("textarea").on('click', () => {
+	// 	console.log("textarea clicked");
+	// 	if (RecordSendState == 1) {
+	// 		recordButtonClick();
+	// 	}
+	// });
 	
 	setInterval(itemsSpeakCheck, 500); // calls myFunction every 1 second (1000 milliseconds)
 
