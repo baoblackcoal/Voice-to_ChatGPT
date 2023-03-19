@@ -872,8 +872,8 @@ function CN_InitScript() {
 	};
 
 	// Add icons on the top right corner
-	jQuery("body").append("<span class = 'VoiceZone' style='position: fixed; fixed; bottom: 112px; left: 260px; width: 30px;  font-size: 14px; text-align: center; z-index: 1111;   border: 0px; outline: none;' >" +
-		"<button style='padding: 4px; margin: 3px; background: rgba(0, 0, 0, 0); opacity: 0.2; border-radius: 4px;' id='SettingButton'> " +
+	jQuery("body").append("<span class = 'VoiceZone' style='position: fixed; fixed; bottom: 119px;; left: 260px; width: 30px;  font-size: 14px; text-align: center; z-index: 1111;   border: 0px; outline: none;' >" +
+		"<button style='padding: 4px; margin: 6px 3px 3px 3px; background: rgba(0, 0, 0, 0); opacity: 0.2; border-radius: 4px;' id='SettingButton'> " +
 		"<svg stroke='currentColor' stroke-width='1.3'  width='22px' height='22px' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M12 22.75C6.07 22.75 1.25 17.93 1.25 12C1.25 6.07 6.07 1.25 12 1.25C17.93 1.25 22.75 6.07 22.75 12C22.75 17.93 17.93 22.75 12 22.75ZM12 2.75C6.9 2.75 2.75 6.9 2.75 12C2.75 17.1 6.9 21.25 12 21.25C17.1 21.25 21.25 17.1 21.25 12C21.25 6.9 17.1 2.75 12 2.75Z' fill='#000000'/><path d='M12 13C11.44 13 11 12.55 11 12C11 11.45 11.45 11 12 11C12.55 11 13 11.45 13 12C13 12.55 12.56 13 12 13Z' fill='#000000'/><path d='M16 13C15.44 13 15 12.55 15 12C15 11.45 15.45 11 16 11C16.55 11 17 11.45 17 12C17 12.55 16.56 13 16 13Z' fill='#000000'/><path d='M8 13C7.44 13 7 12.55 7 12C7 11.45 7.45 11 8 11C8.55 11 9 11.45 9 12C9 12.55 8.56 13 8 13Z' fill='#000000'/></svg>" +
 		// "<svg stroke='currentColor' stroke-width='1.3' viewBox='0 0 24 24' height='22px' width='22px'  fill='none' xmlns='http://www.w3.org/2000/svg'> <path fill-rule='evenodd' clip-rule='evenodd' d='M2.44044 10.2841L5.74755 4.28409C6.35499 3.18202 7.49767 2.5 8.73669 2.5H15.2633C16.5023 2.5 17.645 3.18202 18.2525 4.28409L21.5596 10.2841C22.1468 11.3495 22.1468 12.6505 21.5596 13.7159L18.2525 19.7159C17.645 20.818 16.5023 21.5 15.2633 21.5H8.73669C7.49767 21.5 6.35499 20.818 5.74755 19.7159L2.44044 13.7159C1.85319 12.6505 1.85319 11.3495 2.44044 10.2841ZM3.72151 11.0195L7.02861 5.01948C7.37572 4.38972 8.02868 4 8.73669 4H15.2633C15.9713 4 16.6243 4.38972 16.9714 5.01948L20.2785 11.0195C20.6141 11.6283 20.6141 12.3717 20.2785 12.9805L16.9714 18.9805C16.6243 19.6103 15.9713 20 15.2633 20H8.73669C8.02868 20 7.37572 19.6103 7.02861 18.9805L3.72151 12.9805C3.38593 12.3717 3.38593 11.6283 3.72151 11.0195Z' fill='#030D45'/> <path fill-rule='evenodd' clip-rule='evenodd' d='M12 9.75C10.7824 9.75 9.79526 10.7574 9.79526 12C9.79526 13.2426 10.7824 14.25 12 14.25C13.2176 14.25 14.2047 13.2426 14.2047 12C14.2047 10.7574 13.2176 9.75 12 9.75ZM8.32544 12C8.32544 9.92893 9.9706 8.25 12 8.25C14.0294 8.25 15.6746 9.92893 15.6746 12C15.6746 14.0711 14.0294 15.75 12 15.75C9.9706 15.75 8.32544 14.0711 8.32544 12Z' fill='#030D45'/> </svg>" +
 		"</button>" +
@@ -1091,7 +1091,7 @@ function CN_OnSettingsIconClick() {
 	});
 	rows += "<tr><td>AI voice and language:</td><td><select id='TTGPTVoice' style='width: 300px; color: black; border-radius: 4px; '>" + voices + "</select></td></tr>";
 
-	rows += "<tr><td>Auto Text-to-speech:</td><td><input  type='checkbox' id='TextToSpeeh' style='padding: 10px; color: black; border:2px solid white; border-radius: 4px; '></input></td></tr>";
+	rows += "<tr><td>Auto speak new responses:</td><td><input  type='checkbox' id='TextToSpeeh' style='padding: 10px; color: black; border:2px solid white; border-radius: 4px; '></input></td></tr>";
 
 	// 2. AI talking speed
 	rows += "<tr><td>AI talking speed (speech rate):</td><td><input type=number step='.1' id='TTGPTRate' style='color: black; width: 100px; border-radius: 4px; ' value='" + CN_TEXT_TO_SPEECH_RATE + "' /></td></tr>";
@@ -1128,18 +1128,24 @@ function CN_OnSettingsIconClick() {
 	var closeRow = "<tr><td colspan=2 style='text-align: center'><br /><button id='TTGPTSave' style='border: 1px solid #CCC; padding: 4px; background: #FFF; border-radius: 4px; color:black; width: 80px;'>Save</button>&nbsp;<button id='TTGPTCancel' style='margin-left: 20px; border: 1px solid #CCC; padding: 4px; margin-left: 100px; background: #FFF; border-radius: 4px; color:black; width: 80px;'>Cancel</button></td></tr>";
 
 	// Prepare settings table
-	var table = "<table cellpadding=6 cellspacing=0 style='margin: 30px; font-size:20px; color: white;'>" + rows + closeRow + "</table>";
+	var table = "<table cellpadding=6 cellspacing=0 style='margin: 30px; font-size:20px; color: white; justify-content: center; align-items: center; display: flex;'>" + rows + closeRow + "</table>";
 
 	// A short text at the beginning
 	var desc = "<div style='margin: 8px;'><b>Enjoy chatting with ChatGPT using your voice. </b>  <br /> <div style='color: gray;'> <br /> Please note: Voice-to-ChatGPT is inspired by <a href='https://chrome.google.com/webstore/detail/talk-to-chatgpt/hodadfhfagpiemkeoliaelelfbboamlk'>Talk-to-ChatGPT</a> and most souce code come from Talk-to-ChatGPT, thanks to Talk-to-ChatGPT. <br />" + 
 		"some the voices and speech recognition languages do not appear to work. If the one you select doesn't work, try reloading the page. <br />" +
 		"If it still doesn't work after reloading the page, please try selecting another voice or language. <br />" +
 		"Also, sometimes the text-to-speech API takes time to kick in, give it a few seconds to hear the bot speak.<br />" + 
-		" <div>" +
+		" <div >" +
+		"</div>";
+	
+	var support = "" +
+		" <div style='margin-top: 150px; color: white;'>" +
+		"<span style='justify-content: center; align-items: center; display: flex;'><b>If you discover this extension's worth, kindly support me in glee, Through your generous assistance, I'll refine its capabilities, just wait and see.</b></span><br />" +
+		"<div style='margin-top: 10px; justify-content: center; align-items: center; display: flex; '> <a href='https://www.buymeacoffee.com/baoblackcoal' target='_blank'><img src='https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png' alt='Buy Me A Coffee' style='height: 60px !important;width: 217px !important;' ></a>" +
 		"</div>";
 
 	// Open a whole screenful of settings
-	jQuery("body").append("<div style='background: rgba(0,0,0,0.7); position: absolute; top: 0; right: 0; left: 0; bottom: 0; z-index: 999999; padding: 20px; color: white; font-size: 14px;  justify-content: center; align-items: center; display: flex;' id='TTGPTSettingsArea'><div style='margin: 8px; width: 1000px'><h1>⚙️ Voice-to-ChatGPT settings</h1>" + desc + table + "</div></div>");
+	jQuery("body").append("<div style='background: rgba(0,0,0,0.8); position: absolute; top: 0; right: 0; left: 0; bottom: 0; z-index: 999999; padding: 20px; color: white; font-size: 14px;  justify-content: center; align-items: center; display: flex;' id='TTGPTSettingsArea'><div style='margin: 8px; width: 1000px'><h1>⚙️ Voice-to-ChatGPT settings</h1>" + desc + table + support + "</div></div>");
 
 	var checkBox = document.getElementById("TextToSpeeh");
 	checkBox.checked = !CN_SPEAKING_DISABLED;
