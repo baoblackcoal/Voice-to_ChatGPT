@@ -1,17 +1,17 @@
 {
 	"manifest_version": 3,
 	"name": "Voice-to-ChatGPT",
-	"version": "1.0.1",
+	"version": "2.0.0",
 	"permissions": [
 	],
-	"description": "Voice-To-ChatGPT, Hold to Talk, and Release to Send.",
+	"description": "Enjoy chatting with ChatGPT using your voice.",
 	"action": {
 		"default_popup": "popup.html",
 		"default_icon": {              
 		  "16": "images/icon-16.png",
 		  "32": "images/icon-32.png"
 		},
-		"default_title": "Talk-to-ChatGPT V1.6.1"
+		"default_title": "Voice-to-ChatGPT V2.0.0"
 	},
 	"content_scripts":[
 		{
