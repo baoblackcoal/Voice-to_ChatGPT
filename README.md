@@ -1,4 +1,4 @@
-#Voice-to_ChatGPT
+# Voice-to_ChatGPT
 
 Enjoy chatting with ChatGPT using your voice.
 Voice-to-ChatGPT
@@ -32,7 +32,7 @@ Please note: Voice-to-ChatGPT is inspired by Talk-to-ChatGPT and most souce code
 
 
 
-#Talk-to-ChatGPT
+# Talk-to-ChatGPT
 **Talk-to-ChatGPT** is a Google Chrome extension that allows users to talk with the ChatGPT AI using their voice (speech recognition), and listen to the bot's answer with a voice (text-to-speech), rather than just by typing. With this tool, users can speak to the AI and receive spoken responses, making the interaction feel more natural and conversational. This could be useful in a variety of settings where it would be helpful to have a more human-like interaction with an AI.
 
 **The Talk-to-ChatGPT Google Chrome extension can be downloaded from the Chrome Web store here:** https://chrome.google.com/webstore/detail/talk-to-chatgpt/hodadfhfagpiemkeoliaelelfbboamlk
