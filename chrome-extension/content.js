@@ -1101,13 +1101,16 @@ function CN_OnSettingsIconClick() {
 
 	// 4. Speech recognition language CN_WANTED_LANGUAGE_SPEECH_REC
 	var languages = "<option value=''></option>";
+	// Iterate over all languages
 	for (var i in CN_SPEECHREC_LANGS) {
 		var languageName = CN_SPEECHREC_LANGS[i][0];
+		// Iterate over all language codes
 		for (var j in CN_SPEECHREC_LANGS[i]) {
 			if (j == 0) continue;
 			var languageCode = CN_SPEECHREC_LANGS[i][j][0];
-			var SEL = languageCode == CN_WANTED_LANGUAGE_SPEECH_REC ? "selected='selected'" : "";
-			languages += "<option value='" + languageCode + "' " + SEL + ">" + languageName + " - " + languageCode + "</option>";
+			var isSelected = languageCode == CN_WANTED_LANGUAGE_SPEECH_REC;
+			var selectionString = isSelected ? "selected='selected'" : "";
+			languages += "<option value='" + languageCode + "' " + selectionString + ">" + languageName + " - " + languageCode + "</option>";
 		}
 	}
 	rows += "<tr><td>Speech recognition language:</td><td><select id='TTGPTRecLang' style='width: 300px; color: black; border-radius: 4px; ' >" + languages + "</select></td></tr>";
