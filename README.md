@@ -1,3 +1,38 @@
+#Voice-to_ChatGPT
+
+Enjoy chatting with ChatGPT using your voice.
+Voice-to-ChatGPT
+
+Enjoy chatting with ChatGPT using your voice.
+
+V2.0.0_20230319
+  New Freature:
+    1. New UI design that provides better experience.
+    2. Speaking for every question and answer.
+    3. Stop speaking for current voice output.
+  Fix:
+    1. Fix the issue of speaking problems.
+
+
+
+V1.0.1_20230305
+Voice-To-ChatGPT, Hold to Talk, and Release to Send.
+
+The "Vioce-to-Talk" extension allows you to interact with the ChatGPT language model through your microphone and hear its responses with a voice.
+
+This extension uses speech recognition and text-to-speech technologies from Google Chrome, and supports all major languages. 
+
+To use it, you need to open the ChatGPT home page, Holding "Hold to Talk" button to talk, release the button to send. Also, you can cancel and edit if you want to.
+
+
+Please note: Voice-to-ChatGPT is inspired by Talk-to-ChatGPT and most souce code come from Voice-to-ChatGPT, thanks to Voice-to-ChatGPT.
+
+
+
+
+
+
+#Talk-to-ChatGPT
 **Talk-to-ChatGPT** is a Google Chrome extension that allows users to talk with the ChatGPT AI using their voice (speech recognition), and listen to the bot's answer with a voice (text-to-speech), rather than just by typing. With this tool, users can speak to the AI and receive spoken responses, making the interaction feel more natural and conversational. This could be useful in a variety of settings where it would be helpful to have a more human-like interaction with an AI.
 
 **The Talk-to-ChatGPT Google Chrome extension can be downloaded from the Chrome Web store here:** https://chrome.google.com/webstore/detail/talk-to-chatgpt/hodadfhfagpiemkeoliaelelfbboamlk
